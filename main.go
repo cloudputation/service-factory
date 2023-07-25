@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"text/template"
@@ -34,6 +35,23 @@ type ResponseBody struct {
 }
 
 func main() {
+
+
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+			return
+		}
+
+		content, err := ioutil.ReadFile("/app/API_VERSION")
+		if err != nil {
+			http.Error(w, "Failed to read API version", http.StatusInternalServerError)
+			return
+		}
+
+		response := string(content) + " OK"
+		w.Write([]byte(response))
+	})
 
 	http.HandleFunc("/run", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
@@ -100,9 +118,9 @@ func main() {
 		json.NewEncoder(w).Encode(ResponseBody{Message: "Operation completed successfully"})
 	})
 
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
+	// http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+	// 	w.WriteHeader(http.StatusOK)
+	// })
 
 	http.ListenAndServe(":48840", nil)
 }

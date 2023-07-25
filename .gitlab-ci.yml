@@ -1,0 +1,14 @@
+---
+build-service:
+  script:
+    - echo $(pwd)
+    - sudo docker build -t registry.gitlab.com/cloudputation/service-factory:latest .
+    - sudo docker push registry.gitlab.com/cloudputation/service-factory:latest
+
+deploy-nomad-service:
+  needs:
+    - job: build-service
+  script:
+    - export NOMAD_HOST="10.100.200.241"
+    - terraform -chdir=$(pwd)/nomad init
+    - terraform -chdir=$(pwd)/nomad apply -auto-approve -var nomad_server_address="http://${NOMAD_HOST}:4646" -var jobspec_path="$(pwd)/nomad/jobspec/service-factory.nomad"

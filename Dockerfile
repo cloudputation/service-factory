@@ -31,16 +31,17 @@ RUN echo "TERRAFORM HAS BEEN INSTALLED! - $(terraform version)"
 # Copy go mod and sum files
 COPY go.mod go.sum ./
 COPY ./terraform/ ./terraform/
+COPY ./API_VERSION/ ./API_VERSION
 
 # Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
 RUN go mod download
 
 # Copy the source from the current directory to the Working Directory inside the container
-COPY . .
+COPY ./main.go .
 
 # Build the Go app
-RUN go build -o main .
-
+RUN go build -o sf .
+RUN cp sf /usr/bin/sf
 
 
 RUN terraform -chdir="terraform" init
@@ -48,4 +49,4 @@ RUN terraform -chdir="terraform" init
 EXPOSE 48840
 
 # Command to run the executable
-CMD ["./main"]
+CMD ["/usr/bin/sf"]

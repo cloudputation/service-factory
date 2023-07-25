@@ -1,0 +1,8 @@
+[
+  {
+    "files": ["**/*"],
+    "command": "./helpers/onsave.service-factory.sh",
+    "showOutput": "false",
+    "showError": "false"
+  }
+]

@@ -1,3 +1,3 @@
-module github.com/fishstock/my-go-app
+module github.com/cloudputation/service-factory
 
 go 1.18

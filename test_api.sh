@@ -2,7 +2,7 @@
 
 curl -X POST -H "Content-Type: application/json" \
      -d '{
-         	"repo_url": "https://gitlab.com/FranksRobins/cookie-cutter-api.git",
+         	"repo_url": "https://gitlab.com/franksrobins/cookie-cutter-api.git",
           "namespace_id": "69638879",
          	"terraform_dir": "terraform/",
          	"git_token": "glpat-HuEekH9zXTi8DbWkyLzo",
