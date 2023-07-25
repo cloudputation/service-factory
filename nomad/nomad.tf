@@ -12,11 +12,11 @@ provider "nomad" {
 }
 
 variable "nomad_server_address" {
-  type = "string"
+  type = string
 }
 
 variable "jobspec_path" {
-  type = "string"
+  type = string
 }
 
 
