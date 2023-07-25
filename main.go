@@ -118,10 +118,6 @@ func main() {
 		json.NewEncoder(w).Encode(ResponseBody{Message: "Operation completed successfully"})
 	})
 
-	// http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-	// 	w.WriteHeader(http.StatusOK)
-	// })
-
 	http.ListenAndServe(":48840", nil)
 }
 
