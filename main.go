@@ -34,6 +34,8 @@ type ResponseBody struct {
 	Message  string `json:"message"`
 }
 
+var terraformCommand string
+
 func main() {
 
 
@@ -53,7 +55,7 @@ func main() {
 		w.Write([]byte(response))
 	})
 
-	http.HandleFunc("/run", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/create", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 			return
@@ -101,7 +103,8 @@ func main() {
 			}
 		}
 
-		err = runTerraform(body.TerraformDir, body.EnvVars)
+		var terraformCommand = "apply"
+		err = runTerraform(body.TerraformDir, body.EnvVars, terraformCommand)
 		if err != nil {
 			http.Error(w, "Failed to run terraform: "+err.Error(),
 				http.StatusInternalServerError)
@@ -167,13 +170,8 @@ func renderTemplate(templateFilename, outputFilename string, envVars EnvVars) er
 	return nil
 }
 
-func runTerraform(terraformDir string, envVars EnvVars) error {
-  // var filesJson []byte
-  // filesJson, err := json.Marshal(cookieCutterFiles)
-  // if err != nil {
-  //     return err
-  // }
-	cmd := exec.Command("terraform", "-chdir="+terraformDir, "apply", "-auto-approve", "-var", "repo_name="+envVars.ServiceName, "-var", "gitlab_token="+envVars.GitToken, "-var", "runner_id="+envVars.RunnerID)
+func runTerraform(terraformDir string, terraformCommand, envVars EnvVars) error {
+	cmd := exec.Command("terraform", "-chdir="+terraformDir, terraformCommand, "-auto-approve", "-var", "repo_name="+envVars.ServiceName, "-var", "gitlab_token="+envVars.GitToken, "-var", "runner_id="+envVars.RunnerID)
 	err := cmd.Run()
 	if err != nil {
 		return err
