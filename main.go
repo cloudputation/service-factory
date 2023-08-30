@@ -7,6 +7,12 @@ import (
 	"os"
 	"os/exec"
 	"text/template"
+	"fmt"
+	"log"
+
+	"github.com/hashicorp/hcl/v2/gohcl"
+	"github.com/hashicorp/hcl/v2/hclparse"
+	"github.com/zclconf/go-cty/cty"
 )
 
 type EnvVars struct {

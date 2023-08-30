@@ -1,0 +1,36 @@
+package main
+
+import (
+    "github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+    "encoding/json"
+    "net/http"
+    "bytes"
+)
+
+type EnvVars struct {
+    {{- range .RequiredFields }}
+    {{ .Name }} string `json:"{{ .Name }}"`
+    {{- end }}
+}
+
+func resourceWidgetCreate(d *schema.ResourceData, m interface{}) error {
+    envVars := EnvVars{
+        {{- range .RequiredFields }}
+        {{ .Name }}: d.Get("{{ .Name }}").(string),
+        {{- end }}
+    }
+
+    envVarsJson, err := json.Marshal(envVars)
+    if err != nil {
+        return err
+    }
+
+    _, err = http.Post(m.(*Config).APIUrl+"/create", "application/json", bytes.NewBuffer(envVarsJson))
+    if err != nil {
+        return err
+    }
+
+    d.SetId(envVars.ServiceName) // or any unique identifier for the resource
+
+    return resourceWidgetRead(d, m)
+}
