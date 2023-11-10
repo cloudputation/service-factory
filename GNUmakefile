@@ -1,5 +1,8 @@
 # GNUmakefile
 
+# Configure shell path
+SHELL := /bin/bash
+
 # Name of the binary to be built
 BINARY_NAME := service-factory
 
