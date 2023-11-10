@@ -3,11 +3,12 @@
 
 set -e
 
-# Initiate terraform
-for d in $(ls ./terraform);
-do
-  terraform -chdir="${d}" init
-done
+# # Initiate terraform
+# for d in $(ls ./terraform);
+# do
+#   terraform -chdir="${d}" init
+# done
+  terraform -chdir="terraform/" init
 
 
 # If the user is trying to run service-factory directly with some arguments,
