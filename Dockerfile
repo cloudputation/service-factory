@@ -17,7 +17,7 @@ ENV SF_CONFIG_FILE_PATH=/service-factory/config/config.hcl
 WORKDIR /service-factory
 
 RUN apt update
-RUN apt update && apt install -y gnupg software-properties-common
+RUN apt update && apt install -y dumb-init gnupg software-properties-common
 RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
       gpg --dearmor | \
       tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
