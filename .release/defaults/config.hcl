@@ -1,4 +1,4 @@
-data_dir = "/home/devops/dev/sf-data"
+data_dir = "sf-data/"
 
 server {
   port    = "48840"

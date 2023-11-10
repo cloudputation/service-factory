@@ -3,34 +3,37 @@ package service
 
 type RequestBody struct {
 	ServiceSpecs
-	TerraformDir string `json:"terraform_dir"`
 }
 
 type ServiceSpecs struct {
-    Repo      Repo      `hcl:"repo,block"`
-    Scheduler Scheduler `hcl:"scheduler,block"`
+	Service Service `hcl:"service,block"`
+}
+
+type Service struct {
+  Name	string		`hcl:"name"`
+  Group	string		`hcl:"group"`
+  Port	string		`hcl:"port"`
+  Tags	[]string	`hcl:"tags"`
+  Template  			`hcl:"template,block"`
+  Repo      			`hcl:"repo,block"`
+  Network      		`hcl:"network,block"`
+}
+
+type Template struct {
+	TemplateURL  string `hcl:"template_url"`
+	TemplateName string `hcl:"template"`
 }
 
 type Repo struct {
-		Provider				string `hcl:"provider_url"`
-    TemplateName    string `hcl:"template"`
-    NamespaceID     string `hcl:"namespace_id"`
-    Token           string `hcl:"token"`
-    RunnerID        string `hcl:"runner_id"`
-    RegistryToken   string `hcl:"registry_token"`
-    RepositoryOwner string `hcl:"repository_owner"`
+	ProviderURL     string `hcl:"provider_url"`
+	NamespaceID     string `hcl:"namespace_id"`
+	Token           string `hcl:"token"`
+	RunnerID        string `hcl:"runner_id"`
+	RegistryToken   string `hcl:"registry_token"`
+	RepositoryOwner string `hcl:"repository_owner"`
 }
 
-type Scheduler struct {
-    Nomad Nomad `hcl:"nomad,block"`
-}
-
-type Nomad struct {
-    ServiceName         string   	`hcl:"name"`
-    ServiceGroup        string   	`hcl:"group"`
-    ServicePort         string 		`hcl:"port"`
-    ServiceTags         []string	`hcl:"tags"`
-    ServiceType         string		`hcl:"type"`
-    ServiceTargetClient string		`hcl:"target_client"`
-		ServerAddress				string		`hcl:"server_address"`
+type Network struct {
+	AuthoritativeServer	string `hcl:"authoritative_server"`
+	ClientHostname			string `hcl:"client_hostname"`
 }

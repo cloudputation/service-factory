@@ -14,8 +14,8 @@ Help:           Description:                    Usage:
 
 Commands:       Description:                    Usage:
     config      Parse config and print          servicectl config [path]
-    apply       Deploy service                  servicectl apply [path]
-    agent       Run Service Factory server      servicectl agent
+    apply       Deploy service                  servicectl apply  [path]
+    agent       Run Service Factory agent     	servicectl agent
 `
 
 	fmt.Println(helpMessage)

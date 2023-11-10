@@ -1,3 +1,9 @@
+// Define repo variables
+variable "data_dir" {
+  description = "Service Factory data directory"
+  type        = string
+}
+
 variable "repo_name" {
   description = "The name of the GitLab repository"
   type        = string
@@ -6,6 +12,7 @@ variable "repo_name" {
 variable "runner_id" {
   description = "The ID of the gitlab runner"
   type        = string
+  sensitive   = true
 }
 
 variable "gitlab_token" {
@@ -32,19 +39,13 @@ variable "author_name" {
   default     = "fishstock dev"
 }
 
-variable "files_to_add" {
-  description = "The list of files to be added to the GitLab repository."
-  type        = list(string)
-  default     = [
-    "service.py",
-    "Dockerfile",
-    "API_VERSION",
-    "requirements.txt",
-    "nomad/nomad.tf",
-    "nomad/jobspec/service.nomad"
-  ]
+// Get project files
+locals {
+  all_files = fileset("${var.data_dir}/services/${var.repo_name}/repo", "/**/*")
+  filtered_files = { for file in local.all_files : file => file if file != ".gitlab-ci.yml" }
 }
 
+// Configure provider
 terraform {
   required_providers {
     gitlab = {
@@ -63,8 +64,7 @@ provider "gitlab" {
   token = var.gitlab_token
 }
 
-
-
+// Create new repo
 resource "gitlab_project" "new_project" {
   name = var.repo_name
   visibility_level = "private"
@@ -78,13 +78,14 @@ data "gitlab_project" "project_info" {
   ]
 }
 
+// Upload project files
 resource "gitlab_repository_file" "upload_files" {
-  for_each = toset(var.files_to_add)
+  for_each = local.filtered_files
 
   project        = gitlab_project.new_project.id
   file_path      = "${each.key}"
   branch         = "master"
-  content        = file("../${var.repo_name}/${each.key}")
+  content        = file("${var.data_dir}/services/${var.repo_name}/repo/${each.key}")
   author_email   = var.author_email
   author_name    = var.author_name
   commit_message = var.commit_message
@@ -94,25 +95,28 @@ resource "gitlab_repository_file" "upload_files" {
   ]
 }
 
-resource "gitlab_project_runner_enablement" "enable_runner" {
-  project   = data.gitlab_project.project_info.id
-  runner_id = var.runner_id
-  depends_on = [
-    gitlab_repository_file.upload_files,
-    data.gitlab_project.project_info
-  ]
-}
-
+// Upload CI file
 resource "gitlab_repository_file" "upload_ci_file" {
   project        = gitlab_project.new_project.id
   file_path      = ".gitlab-ci.yml"
   branch         = "master"
-  content        = file("../${var.repo_name}/.gitlab-ci.yml")
+  content        = file("${var.data_dir}/services/${var.repo_name}/repo/.gitlab-ci.yml")
   author_email   = var.author_email
   author_name    = var.author_name
   commit_message = var.commit_message
 
   depends_on = [
-    gitlab_project_runner_enablement.enable_runner
+    gitlab_repository_file.upload_files
+  ]
+}
+
+
+// Connect repo to pipeline
+resource "gitlab_project_runner_enablement" "enable_runner" {
+  project   = data.gitlab_project.project_info.id
+  runner_id = var.runner_id
+
+  depends_on = [
+    gitlab_repository_file.upload_files
   ]
 }

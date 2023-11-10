@@ -1,14 +1,40 @@
 ---
-build-service:
+variables:
+  DOCKER_IMAGE: "service-factory"
+  DOCKER_TAG: "latest"
+  IMAGE_DISTRIBUTOR: "cloudputation"
+  DOCKER_REGISTRY: "registry.gitlab.com"
+  NOMAD_HOST: "10.100.200.241"
+
+build-binary:
   script:
-    - echo $(pwd)
-#     - sudo docker build -t registry.gitlab.com/cloudputation/service-factory:latest .
-#     - sudo docker push registry.gitlab.com/cloudputation/service-factory:latest
-#
-# deploy-nomad-service:
-#   needs:
-#     - job: build-service
-#   script:
-#     - export NOMAD_HOST="10.100.200.241"
-#     - terraform -chdir=$(pwd)/nomad init
-#     - terraform -chdir=$(pwd)/nomad apply -auto-approve -var nomad_server_address="http://${NOMAD_HOST}:4646" -var jobspec_path="$(pwd)/nomad/jobspec/service-factory.nomad"
+    - make build
+  artifacts:
+    paths:
+      - ./build/
+
+build-docker-image:
+  needs:
+    - job: build-binary
+  script:
+    - make docker-build
+  dependencies:
+    - build_binary
+  artifacts:
+    paths:
+      - ./build/
+
+push-docker-image:
+  needs:
+    - job: build-docker-image
+  script:
+    - make docker-push
+  dependencies:
+    - build_docker_image
+
+deploy-service:
+  needs:
+    - job: push-docker-image
+  script:
+    - terraform -chdir=$(pwd)/infra/terraform init
+    - terraform -chdir=$(pwd)/infra/terraform apply -auto-approve -var nomad_server_address="http://${NOMAD_HOST}:4646" -var jobspec_path="$(pwd)/infra/nomad/jobspec..nomad"

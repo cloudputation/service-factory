@@ -12,12 +12,12 @@ func HealthHandler(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  content, err := ioutil.ReadFile("/app/API_VERSION")
+  content, err := ioutil.ReadFile("./API_VERSION")
   if err != nil {
     http.Error(w, "Failed to read API version", http.StatusInternalServerError)
     return
   }
 
-  response := string(content) + " OK"
+  response := string(content) + "OK\n"
   w.Write([]byte(response))
 }

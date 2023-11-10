@@ -2,14 +2,21 @@
 FROM golang:latest
 
 # Add Maintainer Info
-LABEL maintainer="Your Name <your-email@domain.com>"
+ARG NAME=service-factory
+ARG PRODUCT_VERSION
+
+LABEL maintainer="Cloudputation"
+LABEL version=$PRODUCT_VERSION
+
+# Set ARGs as ENV so that they can be used in ENTRYPOINT/CMD
+ENV NAME=$NAME
+ENV VERSION=$PRODUCT_VERSION
 
 # Set the Current Working Directory inside the container
-WORKDIR /app
-
+WORKDIR /service-factory
 
 RUN apt update
-RUN apt update &&  apt install -y gnupg software-properties-common
+RUN apt update && apt install -y gnupg software-properties-common
 RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
       gpg --dearmor | \
       tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
@@ -17,7 +24,6 @@ RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
 RUN gpg --no-default-keyring \
       --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
       --fingerprint
-
 
 RUN echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
       https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
@@ -27,26 +33,22 @@ RUN apt update
 RUN apt -y install terraform
 RUN echo "TERRAFORM HAS BEEN INSTALLED! - $(terraform version)"
 
+RUN addgroup ${NAME} && adduser -S -G ${NAME} ${NAME}
 
-# Copy go mod and sum files
-COPY go.mod go.sum ./
 COPY ./terraform/ ./terraform/
-COPY ./API_VERSION/ ./API_VERSION
-
-# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
-RUN go mod download
+COPY ./API_VERSION ./API_VERSION
 
 # Copy the source from the current directory to the Working Directory inside the container
-COPY ./main.go .
+COPY ./build/service-factory /bin/service-factory
+COPY ./.release/defaults/config.hcl /service-factory/config/config.hcl
+COPY .release/docker/docker-entrypoint.sh /bin/docker-entrypoint.sh
 
-# Build the Go app
-RUN go build -o sf .
-RUN cp sf /usr/bin/sf
-
-
-RUN terraform -chdir="terraform" init
 # Expose port 48840 to the outside
 EXPOSE 48840
 
 # Command to run the executable
-CMD ["/usr/bin/sf"]
+ENTRYPOINT ["/bin/docker-entrypoint.sh"]
+###
+
+USER ${NAME}
+CMD /bin/${NAME}

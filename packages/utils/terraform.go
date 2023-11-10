@@ -1,24 +1,44 @@
 package utils
 
 import (
+    "fmt"
     "os/exec"
 
-    "github.com/cloudputation/service-factory/packages/service"
+    "github.com/cloudputation/service-factory/packages/config"
 )
 
 
-func RunTerraform(
-    terraformDir string,
-    serviceSpecs service.ServiceSpecs,
-    terraformCmd string,
-) error {
+func InitTerraform(terraformDir string) error {
     cmd := exec.Command(
         "terraform",
         "-chdir="+terraformDir,
-        terraformCmd, "-auto-approve",
-        "-var", "repo_name="+serviceSpecs.Scheduler.Nomad.ServiceName,
-        "-var", "gitlab_token="+serviceSpecs.Repo.Token,
-        "-var", "runner_id="+serviceSpecs.Repo.RunnerID,
+        "init",
     )
     return cmd.Run()
+}
+
+func RunTerraform(
+	terraformDir string,
+	terraformCmd string,
+  serviceName  string,
+  runnerID     string,
+  repoToken    string,
+) error {
+	cmd := exec.Command(
+		"terraform",
+		"-chdir="+terraformDir,
+		terraformCmd, "-auto-approve",
+		"-var", "data_dir="+config.AppConfig.DataDir,
+		"-var", "repo_name="+serviceName,
+		"-var", "runner_id="+runnerID,
+		"-var", "gitlab_token="+repoToken,
+	)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Printf("Terraform failed with the following output:\n%s\n", string(output))
+		return err
+	}
+	fmt.Printf("Terraform succeeded with the following output:\n%s\n", string(output))
+	return nil
 }

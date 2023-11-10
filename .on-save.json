@@ -1,11 +1,10 @@
 [
   {
     "files": [
-      "**/*.go",
-      "config.hcl",
+      "main.go",
       "Dockerfile",
-      "nomad/**/*",
-      "terraform/*"
+      ".gitlab-ci-yml",
+      "infra/nomad/jobspec.nomad"
     ],
     "command": "./helpers/onsave.service-factory.sh",
     "showOutput": "false",

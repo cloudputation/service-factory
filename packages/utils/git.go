@@ -1,17 +1,37 @@
 package utils
 
 import (
+    "fmt"
     "os/exec"
+    "path/filepath"
 
-    "github.com/cloudputation/service-factory/packages/service"
 )
 
 
-func GitClone(serviceSpecs service.ServiceSpecs) error {
-	repoProvider := serviceSpecs.Repo.Provider
-	template := serviceSpecs.Repo.TemplateName
+// func GitClone(repoProvider string, template string, cookieCutterDestination string) error {
+// 	cookieCutterGitUrl := fmt.Sprintf("https://%s/%s.git", repoProvider, template)
+//
+//   fmt.Println("Cloning from", cookieCutterGitUrl)
+//
+// 	cmd := exec.Command("git", "clone", cookieCutterGitUrl, cookieCutterDestination)
+// 	return cmd.Run()
+// }
+func GitClone(repoProvider string, template string, cookieCutterDestination string) error {
 	cookieCutterGitUrl := fmt.Sprintf("https://%s/%s.git", repoProvider, template)
 
-	cmd := exec.Command("git", "clone", cookieCutterGitUrl, template)
-	return cmd.Run()
+	fmt.Println("Cloning from", cookieCutterGitUrl)
+
+	cmd := exec.Command("git", "clone", cookieCutterGitUrl, cookieCutterDestination)
+  err := cmd.Run()
+	if err != nil {
+		return err
+	}
+
+  gitDirectory := filepath.Join(cookieCutterDestination, ".git")
+  err = DeleteDir(gitDirectory)
+  if err != nil {
+		return err
+	}
+
+	return nil
 }

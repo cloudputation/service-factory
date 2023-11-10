@@ -1,11 +1,11 @@
 service {
-  name    = "my-first-service"
-  group   = "tests-apis"
-  port    = "9999"
+  name    = "test-service1"
+  group   = "test-apis"
+  port    = "9977"
   tags    = ["SF-Managed"]
 
   template {
-    provider_url  = "gitlab.com"
+    template_url  = "gitlab.com"
     template      = "franksrobins/cookie-cutter-api"
   }
 
@@ -18,10 +18,22 @@ service {
     repository_owner  = "franksrobins"
   }
 
-  scheduler {
-    nomad {
-      type            = "service"
-      target_client   = "tower2"
-    }
+  network {
+    authoritative_server  = "10.100.200.241"
+    client_hostname       = "tower2"
   }
+
+  // network {
+  //   parameter = value <- find this option first
+  //   consul {
+  //     consul_host = "10.100.200.241"
+  //   }
+  // }
+  //
+  // scheduler {
+  //   parameter = value <- find this option first
+  //   nomad {
+  //     nomad_host  = "10.100.200.241"
+  //   }
+  // }
 }

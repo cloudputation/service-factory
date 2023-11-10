@@ -1,19 +1,64 @@
 package config
 
+import (
+    "os"
 
-type Config struct {
-    Nomad   Nomad  `hcl:"nomad,block"`
-    Server  Server `hcl:"repo,block"`
+    "github.com/hashicorp/hcl/v2/gohcl"
+    "github.com/hashicorp/hcl/v2/hclparse"
+)
+
+
+type Configuration struct {
+  DataDir string        `hcl:"data_dir"`
+  Server  Server        `hcl:"server,block"`
+  Consul  Consul        `hcl:"consul,block"`
+  Terraform  Terraform  `hcl:"terraform,block"`
 }
 
 type Server struct {
-    ServerPort    string `hcl:"port"`
-    ServerAddress string `hcl:"address"`
+  ServerPort    string `hcl:"port"`
+  ServerAddress string `hcl:"address"`
+
 }
 
-type Nomad struct {
-    NomadAddress string `hcl:"server_address"`
+type DataDir struct {
+  DataDir string `hcl:data_dir`
 }
 
+type Consul struct {
+  ConsulHost string `hcl:"consul_host"`
 
-var terraformDir = "terraform/"
+}
+
+type Terraform struct {
+  TerraformDir string `hcl:"terraform_dir"`
+
+}
+
+var AppConfig Configuration
+
+
+
+
+func LoadConfiguration() error {
+  // Read the HCL file
+  data, err := os.ReadFile("config.hcl")
+  if err != nil {
+      return err
+  }
+
+  // Parse the HCL file
+  parser := hclparse.NewParser()
+  file, diags := parser.ParseHCL(data, "config.hcl")
+  if diags.HasErrors() {
+      return diags
+  }
+
+  // Decode the HCL file into your Config struct
+  diags = gohcl.DecodeBody(file.Body, nil, &AppConfig)
+  if diags.HasErrors() {
+      return diags
+  }
+
+  return nil
+}
