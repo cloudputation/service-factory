@@ -6,15 +6,32 @@ import (
 	"encoding/json"
 
 	"github.com/hashicorp/consul/api"
+	"github.com/cloudputation/service-factory/packages/config"
 )
 
 
 func ConsulStorePut(jsonData string, keyPath string) error {
-	// Initialize Consul client
+	// Load configuration
+	err := config.LoadConfiguration()
+	if err != nil {
+		// Handle error
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
+	// Get the Consul host from the configuration
+	consulHost := config.AppConfig.Consul.ConsulHost
+
+	// Create a new Consul API client configuration
 	consulConfig := api.DefaultConfig()
+
+	// Set the address of the Consul server
+	consulConfig.Address = consulHost
+
+	// Create a new Consul API client
 	client, err := api.NewClient(consulConfig)
 	if err != nil {
-		return err
+		// Handle error
+		log.Fatalf("Failed to create Consul client: %v", err)
 	}
 
 	// Get KV API client
