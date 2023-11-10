@@ -43,6 +43,11 @@ COPY ./build/service-factory /bin/service-factory
 COPY ./.release/defaults/config.hcl /service-factory/config/config.hcl
 COPY .release/docker/docker-entrypoint.sh /bin/docker-entrypoint.sh
 
+RUN chmod +x /bin/docker-entrypoint.sh
+
+RUN mkdir -p /service-factory/config \
+	&& chown -R ${NAME}:${NAME} /service-factory
+
 # Expose port 48840 to the outside
 EXPOSE 48840
 
