@@ -43,6 +43,7 @@ COPY ./build/service-factory /bin/service-factory
 COPY ./.release/defaults/config.hcl /service-factory/config/config.hcl
 COPY .release/docker/docker-entrypoint.sh /bin/docker-entrypoint.sh
 
+# Add permissions to entry script
 RUN chmod +x /bin/docker-entrypoint.sh
 
 RUN mkdir -p /service-factory/config \
