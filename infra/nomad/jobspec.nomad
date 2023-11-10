@@ -3,7 +3,7 @@ job "service-factory" {
 
   constraint {
     attribute = "${attr.unique.hostname}"
-    value     = "tower2"
+    value     = "nia1"
   }
 
   type = "service"
