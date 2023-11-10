@@ -33,7 +33,7 @@ RUN apt update
 RUN apt -y install terraform
 RUN echo "TERRAFORM HAS BEEN INSTALLED! - $(terraform version)"
 
-RUN addgroup ${NAME} && adduser -S -G ${NAME} ${NAME}
+RUN addgroup --system ${NAME} && adduser --system --ingroup ${NAME} ${NAME}
 
 COPY ./terraform/ ./terraform/
 COPY ./API_VERSION ./API_VERSION
