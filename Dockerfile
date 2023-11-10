@@ -46,7 +46,7 @@ COPY ./.release/defaults/config.hcl /service-factory/config/config.hcl
 COPY .release/docker/docker-entrypoint.sh /bin/docker-entrypoint.sh
 
 # Create data directory
-RUN mkdir -p /service-factory/sf-data
+RUN mkdir -p /service-factory/sf-data/services
 
 # Add permissions to entry script
 RUN chmod +x /bin/docker-entrypoint.sh
