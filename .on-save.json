@@ -3,7 +3,7 @@
     "files": [
       "main.go",
       "Dockerfile",
-      ".gitlab-ci-yml",
+      ".gitlab-ci.yml",
       "infra/nomad/jobspec.nomad"
     ],
     "command": "./helpers/onsave.service-factory.sh",

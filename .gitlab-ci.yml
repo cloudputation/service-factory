@@ -18,8 +18,6 @@ build-docker-image:
     - job: build-binary
   script:
     - make docker-build
-  dependencies:
-    - build_binary
   artifacts:
     paths:
       - ./build/
@@ -29,8 +27,6 @@ push-docker-image:
     - job: build-docker-image
   script:
     - make docker-push
-  dependencies:
-    - build_docker_image
 
 deploy-service:
   needs:
