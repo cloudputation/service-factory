@@ -41,8 +41,13 @@ var AppConfig Configuration
 
 
 func LoadConfiguration() error {
+  configPath := os.Getenv("SF_CONFIG_FILE_PATH")
+  if configPath == "" {
+      configPath = "/etc/config.hcl" // Default path
+  }
+
   // Read the HCL file
-  data, err := os.ReadFile("config.hcl")
+  data, err := os.ReadFile(configPath)
   if err != nil {
       return err
   }

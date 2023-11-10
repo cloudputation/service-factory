@@ -8,9 +8,10 @@ ARG PRODUCT_VERSION
 LABEL maintainer="Cloudputation"
 LABEL version=$PRODUCT_VERSION
 
-# Set ARGs as ENV so that they can be used in ENTRYPOINT/CMD
+# Set ENV values
 ENV NAME=$NAME
 ENV VERSION=$PRODUCT_VERSION
+ENV SF_CONFIG_FILE_PATH=/service-factory/config/config.hcl
 
 # Set the Current Working Directory inside the container
 WORKDIR /service-factory
