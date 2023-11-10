@@ -30,7 +30,7 @@ SF_CONFIG_DIR=/service-factory/config
 # Set the configuration directory
 if [ "$1" = '/bin/service-factory' ]; then
 	shift
-	set -- /bin/service-factory #-config-dir="$SF_CONFIG_DIR" "$@"
+	set -- /bin/service-factory agent #-config-dir="$SF_CONFIG_DIR" "$@"
 fi
 
 exec "$@"
