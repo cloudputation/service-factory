@@ -25,7 +25,7 @@ func ConsulStorePut(jsonData string, keyPath string) error {
 	consulConfig := api.DefaultConfig()
 
 	// Set the address of the Consul server
-	consulConfig.Address = consulHost
+	consulConfig.Address = consulHost + ":8500"
 
 	// Create a new Consul API client
 	client, err := api.NewClient(consulConfig)
