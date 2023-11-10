@@ -16,6 +16,7 @@ ENV SF_CONFIG_FILE_PATH=/service-factory/config/config.hcl
 # Set the Current Working Directory inside the container
 WORKDIR /service-factory
 
+
 RUN apt update
 RUN apt update && apt install -y dumb-init gnupg software-properties-common
 RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
@@ -44,7 +45,9 @@ COPY ./build/service-factory /bin/service-factory
 COPY ./.release/defaults/config.hcl /service-factory/config/config.hcl
 COPY .release/docker/docker-entrypoint.sh /bin/docker-entrypoint.sh
 
-RUN ls /bin
+# Create data directory
+RUN /service-factory/sf-data
+
 # Add permissions to entry script
 RUN chmod +x /bin/docker-entrypoint.sh
 
