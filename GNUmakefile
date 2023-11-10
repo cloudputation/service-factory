@@ -34,9 +34,13 @@ all: build docker-build docker-push
 
 # Build the binary
 build: $(SOURCES)
+	@echo "Downloading dependencies..."
+	@GO111MODULE=on go mod tidy
+	@GO111MODULE=on go mod download
 	@echo "Building $(BINARY_NAME)..."
 	@mkdir -p $(BUILD_DIR)
 	@GO111MODULE=on go build -o $(BUILD_DIR)/$(BINARY_NAME) $(SRC_DIR)
+
 
 # Build the Docker image
 docker-build: build
