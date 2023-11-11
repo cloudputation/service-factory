@@ -32,8 +32,18 @@ DOCKER_REGISTRY := registry.gitlab.com
 # Default target
 all: build docker-build docker-push
 
-# Build the binary
+# Build the binary for docker
 build: $(SOURCES)
+	@echo "Downloading dependencies..."
+	@GO111MODULE=on go mod tidy
+	@GO111MODULE=on go mod download
+	@echo "Building $(BINARY_NAME)..."
+	@mkdir -p $(BUILD_DIR)
+	@GO111MODULE=on go build -o $(BUILD_DIR)/$(BINARY_NAME) $(SRC_DIR)
+
+
+# Build the binary as standalone
+build-standalone: $(SOURCES)
 	@echo "Downloading dependencies..."
 	@GO111MODULE=on go mod tidy
 	@GO111MODULE=on go mod download

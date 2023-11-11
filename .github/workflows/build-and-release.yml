@@ -47,7 +47,7 @@ jobs:
 
     - name: Build for ${{ matrix.os }}-${{ matrix.arch }}
       run: |
-        GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} make build
+        GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} make build-standalone
         mv ./build/service-factory ./build/service-factory-${{ matrix.os }}-${{ matrix.arch }}
 
     - name: Create Release
