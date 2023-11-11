@@ -1,11 +1,4 @@
 ---
-workflow:
-  rules:
-    - changes:
-        - '**/*'
-      except:
-        - .github/workflows/*
-
 variables:
   DOCKER_IMAGE: "service-factory"
   DOCKER_TAG: "latest"
