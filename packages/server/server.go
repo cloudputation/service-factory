@@ -26,7 +26,7 @@ func StartServer() {
 	http.HandleFunc("/service/status", func(w http.ResponseWriter, r *http.Request) {
 		ServiceStatusHandlerWrapper(serviceName, w, r)
 	})
-  http.ListenAndServe(serverPort, nil)
+  err := http.ListenAndServe(serverPort, nil)
   if err != nil {
       log.Fatalf("HTTP server failed: %v", err)
   }
