@@ -20,7 +20,7 @@ func ServiceStatusHandlerWrapper(serviceName string, w http.ResponseWriter, r *h
 }
 
 func ServiceStatusHandler(serviceName string, w http.ResponseWriter, r *http.Request) {
-  if r.Method != http.MethodPost {
+  if r.Method != http.MethodGet {
     http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
     return
   }

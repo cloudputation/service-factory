@@ -37,9 +37,9 @@ build: $(SOURCES)
 	@echo "Downloading dependencies..."
 	@GO111MODULE=on go mod tidy
 	@GO111MODULE=on go mod download
-	@echo "Building $(BINARY_NAME)..."
+	@echo "Building $(BINARY_NAME) for $(GOOS)/$(GOARCH)..."
 	@mkdir -p $(BUILD_DIR)
-	@GO111MODULE=on go build -o $(BUILD_DIR)/$(BINARY_NAME) $(SRC_DIR)
+	@GO111MODULE=on GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o $(BUILD_DIR)/$(BINARY_NAME)-$(GOOS)-$(GOARCH) $(SRC_DIR)
 
 
 # Build the Docker image

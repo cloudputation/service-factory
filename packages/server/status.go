@@ -20,8 +20,8 @@ func StatusHandlerWrapper(serviceName string, w http.ResponseWriter, r *http.Req
 
 func StatusHandler(serviceName string, w http.ResponseWriter, r *http.Request) {
   if r.Method != http.MethodGet {
-      http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-      return
+    http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+    return
   }
 
   err := network.InitConsul(config.AppConfig.Consul.ConsulHost)
