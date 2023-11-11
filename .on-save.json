@@ -4,7 +4,8 @@
       "main.go",
       "Dockerfile",
       ".gitlab-ci.yml",
-      "infra/nomad/jobspec.nomad"
+      "infra/nomad/jobspec.nomad",
+      ".github/workflows/build-and-release.yml"
     ],
     "command": "./helpers/onsave.service-factory.sh",
     "showOutput": "false",
