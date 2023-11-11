@@ -1,0 +1,54 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Remove Unnecessary Files and Directories
+      run: |
+        rm -rf GIT_CONTROLS/
+        rm -rf helpers/
+        rm -rf infra/
+        rm -rf tests/
+        rm -f .on-save.json
+        rm -f .gitlab-ci.yml
+        rm -f config.hcl
+        rm -f service.hcl
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '^1.17'
+
+    - name: Read API_VERSION
+      id: read_version
+      run: echo "VERSION=$(cat API_VERSION)" >> $GITHUB_ENV
+
+    - name: Build using Makefile
+      run: make build
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: "v${{ env.VERSION }}"
+        release_name: "Release v${{ env.VERSION }}"
+        draft: false
+        prerelease: false
+        body: "Service Factory binary release"
+        asset_path: ./build/service-factory
+        asset_name: service-factory
+        asset_content_type: application/octet-stream
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Clean build directory
+      run: make clear
