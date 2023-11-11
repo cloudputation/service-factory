@@ -27,7 +27,7 @@ jobs:
       run: |
         export GOOS=${{ matrix.goos }}
         export GOARCH=${{ matrix.arch }}
-        make build
+        make build-standalone
 
 
     - name: Remove Unnecessary Files and Directories
