@@ -12,8 +12,7 @@ func StartServer() {
 
   port := 48840
   serverPort := fmt.Sprintf(":%d", port)
-  logMessage := fmt.Sprintf("Agent started on port%s", serverPort)
-  log.Println(logMessage)
+  log.Printf("Starting server on port %s", serverPort) // Add this line for debugging
 
   http.HandleFunc("/health", HealthHandler)
   http.HandleFunc("/create", CreateHandlerWrapper)
