@@ -11,7 +11,7 @@ func StartServer() {
   var serviceName string
 
   port := 48840
-  serverPort := fmt.Sprintf(": %d", port)
+  serverPort := fmt.Sprintf(":%d", port)
   logMessage := fmt.Sprintf("Agent started on port%s", serverPort)
   log.Println(logMessage)
 
