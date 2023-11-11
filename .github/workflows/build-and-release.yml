@@ -6,29 +6,14 @@ on:
       - main
   workflow_dispatch:
 
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        os: [linux, darwin]
-        arch: [amd64, arm64]
-        include:
-          - os: linux
-            goos: linux
-          - os: darwin
-            goos: darwin
-    steps:
-    - name: Set up Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: '1.18'
-    - name: Build
-      run: |
-        export GOOS=${{ matrix.goos }}
-        export GOARCH=${{ matrix.arch }}
-        make build-standalone
 
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
 
     - name: Remove Unnecessary Files and Directories
       run: |
@@ -38,17 +23,18 @@ jobs:
         rm -rf tests/
         rm -f .on-save.json
         rm -f .gitlab-ci.yml
-        rm -f config.hcl
-        rm -f service.hcl
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '^1.17'
 
     - name: Read API_VERSION
       id: read_version
       run: echo "VERSION=$(cat API_VERSION)" >> $GITHUB_ENV
 
-    - name: Build for ${{ matrix.os }}-${{ matrix.arch }}
-      run: |
-        GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} make build-standalone
-        mv ./build/service-factory ./build/service-factory-${{ matrix.os }}-${{ matrix.arch }}
+    - name: Build using Makefile
+      run: make build
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
@@ -59,8 +45,7 @@ jobs:
         prerelease: false
         body: "Service Factory binary release"
         files: |
-          build/service-factory-linux-amd64
-          build/service-factory-darwin-amd64
+          build/service-factory
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

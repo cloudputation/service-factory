@@ -1,4 +1,13 @@
 ---
+workflow:
+  rules:
+    - changes:
+        - "main.go"
+        - "packages/*.go"
+        - "Dockerfile"
+        - ".gitlab-ci.yml"
+        - ".release/docker/docker-entrypoint.sh"
+
 variables:
   DOCKER_IMAGE: "service-factory"
   DOCKER_TAG: "latest"
