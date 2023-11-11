@@ -27,5 +27,7 @@ func StartServer() {
 		ServiceStatusHandlerWrapper(serviceName, w, r)
 	})
   http.ListenAndServe(serverPort, nil)
-
+  if err != nil {
+      log.Fatalf("HTTP server failed: %v", err)
+  }
 }
