@@ -1,14 +1,14 @@
 package main
 
 import (
-		"os"
-		"log"
+	"os"
+	"log"
 
-		"github.com/cloudputation/service-factory/packages/bootstrap"
-		"github.com/cloudputation/service-factory/packages/cli"
-		"github.com/cloudputation/service-factory/packages/config"
-		"github.com/cloudputation/service-factory/packages/server"
-		"github.com/cloudputation/service-factory/packages/service"
+	"github.com/cloudputation/service-factory/packages/bootstrap"
+	"github.com/cloudputation/service-factory/packages/cli"
+	"github.com/cloudputation/service-factory/packages/config"
+	"github.com/cloudputation/service-factory/packages/server"
+	"github.com/cloudputation/service-factory/packages/service"
 )
 
 

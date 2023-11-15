@@ -75,6 +75,7 @@ func ConsulStoreGet(ConsulClient *api.Client, key string) (map[string]interface{
 		return nil, err
 	}
 
+
 	return jsonData, nil
 }
 
@@ -83,5 +84,7 @@ func ConsulStoreDelete(ConsulClient *api.Client, keyPath string) error {
 	if err != nil {
 		return fmt.Errorf("Failed to delete key: %s, error: %v", keyPath, err)
 	}
+
+
 	return nil
 }

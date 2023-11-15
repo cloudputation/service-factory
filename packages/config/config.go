@@ -1,10 +1,10 @@
 package config
 
 import (
-    "os"
+  "os"
 
-    "github.com/hashicorp/hcl/v2/gohcl"
-    "github.com/hashicorp/hcl/v2/hclparse"
+  "github.com/hashicorp/hcl/v2/gohcl"
+  "github.com/hashicorp/hcl/v2/hclparse"
 )
 
 
@@ -43,7 +43,7 @@ var AppConfig Configuration
 func LoadConfiguration() error {
   configPath := os.Getenv("SF_CONFIG_FILE_PATH")
   if configPath == "" {
-      configPath = "/etc/config.hcl" // Default path
+      configPath = "/etc/service-factory/config.hcl" // Default path
   }
 
   // Read the HCL file

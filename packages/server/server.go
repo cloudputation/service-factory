@@ -1,9 +1,9 @@
 package server
 
 import (
-    "net/http"
-    "log"
-    "fmt"
+  "net/http"
+  "log"
+  "fmt"
 )
 
 
@@ -19,7 +19,7 @@ func StartServer() {
 	http.HandleFunc("/delete", func(w http.ResponseWriter, r *http.Request) {
 		DeleteHandlerWrapper(serviceName, w, r)
 	})
-	http.HandleFunc("/status", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/system/status", func(w http.ResponseWriter, r *http.Request) {
 		StatusHandlerWrapper(serviceName, w, r)
 	})
 	http.HandleFunc("/service/status", func(w http.ResponseWriter, r *http.Request) {

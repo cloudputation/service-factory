@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/consul/api"
 )
 
+
 var ConsulClient *api.Client
 
 func InitConsul(consulAddress string) error {

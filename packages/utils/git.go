@@ -1,21 +1,12 @@
 package utils
 
 import (
-    "fmt"
-    "os/exec"
-    "path/filepath"
-
+  "fmt"
+  "os/exec"
+  "path/filepath"
 )
 
 
-// func GitClone(repoProvider string, template string, cookieCutterDestination string) error {
-// 	cookieCutterGitUrl := fmt.Sprintf("https://%s/%s.git", repoProvider, template)
-//
-//   fmt.Println("Cloning from", cookieCutterGitUrl)
-//
-// 	cmd := exec.Command("git", "clone", cookieCutterGitUrl, cookieCutterDestination)
-// 	return cmd.Run()
-// }
 func GitClone(repoProvider string, template string, cookieCutterDestination string) error {
 	cookieCutterGitUrl := fmt.Sprintf("https://%s/%s.git", repoProvider, template)
 

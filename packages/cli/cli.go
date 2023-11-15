@@ -1,16 +1,16 @@
 package cli
 
 import (
-		"encoding/json"
-		"fmt"
-		"io/ioutil"
-		"os"
-		"path/filepath"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 
-		"github.com/hashicorp/hcl/v2/gohcl"
-		"github.com/hashicorp/hcl/v2/hclparse"
+	"github.com/hashicorp/hcl/v2/gohcl"
+	"github.com/hashicorp/hcl/v2/hclparse"
 
-		"github.com/cloudputation/service-factory/packages/config"
+	"github.com/cloudputation/service-factory/packages/config"
 )
 
 

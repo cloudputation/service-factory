@@ -1,12 +1,13 @@
 package cli
 
 import (
-    "fmt"
-    "io/ioutil"
-    "net/http"
+  "fmt"
+  "io/ioutil"
+  "net/http"
 
-    "github.com/cloudputation/service-factory/packages/config"
+  "github.com/cloudputation/service-factory/packages/config"
 )
+
 
 func DeleteService(serviceName string) error {
     apiEndpoint := fmt.Sprintf(

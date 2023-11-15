@@ -1,14 +1,14 @@
 package utils
 
 import (
-    "os"
-    "log"
-    "fmt"
-    "text/template"
-    "path/filepath"
+  "os"
+  "log"
+  "fmt"
+  "text/template"
+  "path/filepath"
 
-    "github.com/cloudputation/service-factory/packages/config"
-    "github.com/cloudputation/service-factory/packages/service"
+  "github.com/cloudputation/service-factory/packages/config"
+  "github.com/cloudputation/service-factory/packages/service"
 )
 
 

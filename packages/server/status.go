@@ -10,6 +10,7 @@ import (
   "github.com/cloudputation/service-factory/packages/network"
 )
 
+
 type StatusResponseBody struct {
   Message string `json:"message"`
 }

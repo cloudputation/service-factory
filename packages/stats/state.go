@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 )
 
+
 // FactoryInfo struct holds factory state and services list
 type FactoryInfo struct {
 	FactoryState string   `json:"factory_state"`

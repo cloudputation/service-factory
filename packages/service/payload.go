@@ -1,13 +1,13 @@
 package service
 
 import (
-    "encoding/json"
-    "fmt"
-    "io/ioutil"
-    "log"
+  "encoding/json"
+  "fmt"
+  "io/ioutil"
+  "log"
 
-    "github.com/hashicorp/hcl/v2/gohcl"
-    "github.com/hashicorp/hcl/v2/hclparse"
+  "github.com/hashicorp/hcl/v2/gohcl"
+  "github.com/hashicorp/hcl/v2/hclparse"
 )
 
 

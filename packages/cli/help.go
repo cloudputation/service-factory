@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+
 func HelperMessage()() {
 	helpMessage := `Usage: servicectl <command> [args]
 
