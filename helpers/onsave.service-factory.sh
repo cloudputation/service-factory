@@ -26,8 +26,8 @@ grep "production = true" GIT_CONTROLS/auto_push && auto_push || echo "Auto push 
 
 function sync_to_stage {
   go mod tidy
-  rsync -a -P ./* devops@tool:~/dev/service-factory/
-  # rsync -a -P $SAVED_FILE devops@tool:~/dev/service-factory/$SAVED_FILE
+  # rsync -a -P ./* devops@tool:~/dev/service-factory/
+  rsync -a -P $SAVED_FILE devops@tool:~/dev/service-factory/$SAVED_FILE
   rsync -a -P ./go.mod devops@tool:~/dev/service-factory/
   rsync -a -P ./go.sum devops@tool:~/dev/service-factory/
   rsync -a -P ./.air.toml devops@tool:~/dev/service-factory/
