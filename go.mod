@@ -2,8 +2,6 @@ module github.com/cloudputation/service-factory
 
 go 1.21
 
-toolchain go1.21.4
-
 require (
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/consul-template v0.35.0
