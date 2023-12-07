@@ -1,0 +1,74 @@
+// Create new repo
+resource "gitlab_project" "project_{{ .SerialServiceID }}" {
+  name = "{{ .ServiceName }}"
+  visibility_level = "private"
+  shared_runners_enabled = false
+}
+
+data "gitlab_project" "project_info_{{ .SerialServiceID }}" {
+  path_with_namespace = "{{ .RepoOwner }}/{{ .ServiceName }}"
+
+  depends_on = [
+    gitlab_project.project_{{ .SerialServiceID }}
+  ]
+}
+
+// Upload project files
+resource "gitlab_repository_file" "files_{{ .SerialServiceID }}" {
+  for_each = local.filtered_files
+
+  project        = gitlab_project.project_{{ .SerialServiceID }}.id
+  file_path      = "${each.key}"
+  branch         = "master"
+  content        = file("{{ .DataDir }}/services/{{ .ServiceName }}/repo/${each.key}")
+  encoding       = "text"
+  author_email   = var.author_email
+  author_name    = var.author_name
+  commit_message = var.commit_message
+
+  depends_on = [
+    gitlab_project.project_{{ .SerialServiceID }}
+  ]
+}
+
+// Upload CI file
+resource "gitlab_repository_file" "ci_file_{{ .SerialServiceID }}" {
+  project        = gitlab_project.project_{{ .SerialServiceID }}.id
+  file_path      = ".gitlab-ci.yml"
+  branch         = "master"
+  content        = file("{{ .DataDir }}/services/{{ .ServiceName }}/repo/.gitlab-ci.yml")
+  encoding       = "text"
+  author_email   = var.author_email
+  author_name    = var.author_name
+  commit_message = var.commit_message
+
+  depends_on = [
+    gitlab_repository_file.files_{{ .SerialServiceID }}
+  ]
+}
+
+// Connect repo to pipeline
+resource "gitlab_project_runner_enablement" "ci_runner_{{ .SerialServiceID }}" {
+  project   = data.gitlab_project.project_info_{{ .SerialServiceID }}.id
+  runner_id = {{ .RunnerID }}
+
+  depends_on = [
+    gitlab_repository_file.files_{{ .SerialServiceID }}
+  ]
+}
+
+// Register service manifest
+resource "consul_keys" "consul_key_{{ .SerialServiceID }}" {
+  key {
+    path   = "{{ .ConsulServiceData }}/{{ .ServiceName }}"
+    value  = jsonencode({
+        "service-id": "{{ .ServiceID }}",
+        "repo-provider": "{{ .RepoProvider }}",
+        "repo-id": data.gitlab_project.project_info_{{ .SerialServiceID }}.id
+    })
+  }
+
+  depends_on = [
+    gitlab_project_runner_enablement.ci_runner_{{ .SerialServiceID }}
+  ]
+}

@@ -2,10 +2,16 @@
   {
     "files": [
       "main.go",
+      "packages/**/*.go",
+      ".air.toml",
       "Dockerfile",
       ".gitlab-ci.yml",
+      "helpers/*.sh",
       "infra/nomad/jobspec.nomad",
-      ".github/workflows/build-and-release.yml"
+      ".release/defaults/config.hcl",
+      ".github/workflows/build-and-release.yml",
+      "terraform/**/*",
+      "terraform/**/.terraformrc"
     ],
     "command": "./helpers/onsave.service-factory.sh",
     "showOutput": "false",

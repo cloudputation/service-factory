@@ -1,0 +1,23 @@
+root {
+  file {
+    name    = "main.go"
+  }
+  directory {
+    name = "tests"
+    file {
+      name = "main_test.go"
+    }
+  }
+  directory {
+    name = "packages"
+    dir {
+      name = "my_package"
+      file {
+        name = "hello.go"
+      }
+      file {
+        name = "world.go"
+      }
+    }
+  }
+}

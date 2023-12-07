@@ -25,8 +25,16 @@ function auto_push {
 grep "production = true" GIT_CONTROLS/auto_push && auto_push || echo "Auto push deactivated."
 
 function sync_to_stage {
-  rsync -a -P ./* devops@tower2:~/dev/service-factory/
-  ssh devops@tower2 "cd /home/devops/dev/service-factory && go mod tidy > /dev/null 2>&1"
+  go mod tidy
+  rsync -a -P ./* devops@tool:~/dev/service-factory/
+  # rsync -a -P $SAVED_FILE devops@tool:~/dev/service-factory/$SAVED_FILE
+  rsync -a -P ./go.mod devops@tool:~/dev/service-factory/
+  rsync -a -P ./go.sum devops@tool:~/dev/service-factory/
+  rsync -a -P ./.air.toml devops@tool:~/dev/service-factory/
+  rsync -a -P ./.release/ devops@tool:~/dev/service-factory/.release
+  # ssh devops@tool "bash dev/service-factory/helpers/restart_server.sh"
+  ssh devops@tool "sudo cp /home/devops/dev/service-factory/.release/defaults/config.hcl /etc/service-factory/config.hcl"
+  cp .release/defaults/config.hcl /etc/service-factory/config.hcl
 }
 
 grep "staging = true" GIT_CONTROLS/auto_push && sync_to_stage || echo "Staging deactivated."

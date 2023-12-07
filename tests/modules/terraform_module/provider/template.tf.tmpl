@@ -1,0 +1,56 @@
+// Create new repo
+resource "gitlab_project" "{{ .ServiceID }}" {
+  name = {{ .ServiceName }}
+  visibility_level = "private"
+  shared_runners_enabled = false
+}
+
+data "gitlab_project" "{{ .ServiceID }}_project_info" {
+  path_with_namespace = "{{ .RepoOwner }}/{{ .ServiceName }}"
+  depends_on = [
+    gitlab_project.{{ .ServiceID }}
+  ]
+}
+
+// Upload project files
+resource "gitlab_repository_file" "{{ .ServiceID }}_files" {
+  for_each = local.filtered_files
+
+  project        = gitlab_project.{{ .ServiceID }}.id
+  file_path      = "${each.key}"
+  branch         = "master"
+  content        = file("{{ .DataDir }}/services/{{ .ServiceName }}/repo/${each.key}")
+  author_email   = var.author_email
+  author_name    = var.author_name
+  commit_message = var.commit_message
+
+  depends_on = [
+    gitlab_project.{{ .ServiceID }}
+  ]
+}
+
+// Upload CI file
+resource "gitlab_repository_file" "{{ .ServiceID }}_ci_file" {
+  project        = gitlab_project.{{ .ServiceID }}.id
+  file_path      = ".gitlab-ci.yml"
+  branch         = "master"
+  content        = file("{{ .DataDir }}/services/{{ .ServiceName }}/repo/.gitlab-ci.yml")
+  author_email   = var.author_email
+  author_name    = var.author_name
+  commit_message = var.commit_message
+
+  depends_on = [
+    gitlab_repository_file.{{ .ServiceID }}_files
+  ]
+}
+
+
+// Connect repo to pipeline
+resource "gitlab_project_runner_enablement" "{{ .ServiceID }}_ci_runner" {
+  project   = data.gitlab_project.{{ .ServiceID }}_project_info.id
+  runner_id = var.runner_id
+
+  depends_on = [
+    gitlab_repository_file.{{ .ServiceID }}_files
+  ]
+}

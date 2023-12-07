@@ -1,0 +1,3 @@
+consul_factory_data_dir: "sf::Data/factory"
+consul_access_token: "pLggHasySyfQhkTBWuX30jJ2eM0UJ3Rs6rK8cFNTt/o="
+consul_address: "10.0.0.10"

@@ -1,7 +1,7 @@
 service {
-  name    = "test-service1"
+  name    = "test-service12"
   group   = "test-apis"
-  port    = "9977"
+  port    = "9800"
   tags    = ["SF-Managed"]
 
   template {
@@ -10,9 +10,8 @@ service {
   }
 
   repo {
-    provider_url      = "gitlab.com"
+    provider          = "gitlab"
     namespace_id      = "69638879"
-    token             = "glpat-HuEekH9zXTi8DbWkyLzo"
     runner_id         = "20665767"
     registry_token    = "glpat-kuuxn3oXxwBsCMkxssDY"
     repository_owner  = "franksrobins"
@@ -20,11 +19,11 @@ service {
 
   network {
     authoritative_server  = "10.100.200.241"
-    client_hostname       = "tower2"
+    client_hostname       = "comm1"
   }
 
   // network {
-  //   parameter = value <- find this option first
+  //   parameter = value <- find this option first repo_service_name = ?
   //   consul {
   //     consul_host = "10.100.200.241"
   //   }
