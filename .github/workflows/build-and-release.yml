@@ -39,4 +39,4 @@ jobs:
 
     - name: Push Docker Image
       run: |
-        make docker-push DOCKER_REGISTRY=$DOCKER_REGISTRY
+        make docker-push DOCKER_REGISTRY="ghcr.io"
