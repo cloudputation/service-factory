@@ -7,6 +7,7 @@ workflow:
         - "Dockerfile"
         - ".gitlab-ci.yml"
         - ".release/docker/docker-entrypoint.sh"
+        - ".github/workfloes/build-and-release.yml"
 
 variables:
   DOCKER_IMAGE: "service-factory"
