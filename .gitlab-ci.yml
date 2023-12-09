@@ -29,7 +29,7 @@ build-docker-image:
   needs:
     - job: build-binary
   script:
-    - make docker-build
+    - sudo make docker-build
   artifacts:
     paths:
       - ./build/
@@ -38,7 +38,7 @@ push-docker-image:
   needs:
     - job: build-docker-image
   script:
-    - make docker-push
+    - sudo make docker-push
 
 deploy-service:
   needs:

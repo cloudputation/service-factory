@@ -24,7 +24,6 @@ SOURCES := $(shell find $(SRC_DIR) -name '*.go' ! -path "$(EXCLUDE_DIR)/*" ! -na
 DOCKER_IMAGE := service-factory
 DOCKER_TAG := latest
 IMAGE_DISTRIBUTOR := cloudputation
-DOCKER_REGISTRY :=
 
 # Phony targets for make commands
 .PHONY: all build clean docker-build docker-push
@@ -55,13 +54,13 @@ build-standalone: $(SOURCES)
 # Build the Docker image
 docker-build: build
 	@echo "Building the Docker image..."
-	sudo docker build --build-arg PRODUCT_VERSION=1.0 -t $(DOCKER_IMAGE):$(DOCKER_TAG) .
+	docker build --build-arg PRODUCT_VERSION=1.0 -t $(DOCKER_IMAGE):$(DOCKER_TAG) .
 
 # Push the Docker image to the registry
 docker-push:
 	@echo "Pushing the Docker image..."
-	sudo docker tag $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):$(DOCKER_TAG)
-	sudo docker push $(DOCKER_REGISTRY)/$(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):$(DOCKER_TAG)
+	docker tag $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):$(DOCKER_TAG)
+	docker push $(DOCKER_REGISTRY)/$(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):$(DOCKER_TAG)
 
 # Clean up
 clean:
