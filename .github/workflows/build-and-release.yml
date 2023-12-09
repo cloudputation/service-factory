@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-push:
+  build-and-release:
     runs-on: ubuntu-latest
     env:
       DOCKER_REGISTRY: ghcr.io
@@ -26,6 +26,19 @@ jobs:
 
     - name: Build Binary
       run: make build
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: "v${{ env.VERSION }}"
+        release_name: "Release v${{ env.VERSION }}"
+        draft: false
+        prerelease: false
+        body: "Service Factory binary release"
+        files: |
+          build/service-factory
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build Docker Image
       run: make docker-build
