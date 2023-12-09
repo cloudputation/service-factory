@@ -72,6 +72,6 @@ mirror-to-github:
     # Add, commit, and push changes
     - git add .
     - git commit -m "Release commit"
-    - git push -u origin master
+    - git push -u origin main
   only:
     - main
