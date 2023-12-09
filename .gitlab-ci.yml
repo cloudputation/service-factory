@@ -38,6 +38,7 @@ push-docker-image:
   needs:
     - job: build-docker-image
   script:
+    - export DOCKER_REGISTRY=$DOCKER_REGISTRY
     - sudo make docker-push
 
 deploy-service:
