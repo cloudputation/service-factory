@@ -46,32 +46,28 @@ variables:
 #     - terraform -chdir=$(pwd)/infra/terraform init
 #     - terraform -chdir=$(pwd)/infra/terraform apply -auto-approve -var nomad_server_address="http://${NOMAD_HOST}:4646" -var jobspec_path="$(pwd)/infra/nomad/jobspec.nomad"
 
-clean-repo:
+mirror-to-github:
   # needs:
   #   - job: deploy-service
-  script: |
-    rm -rf GIT_CONTROLS/
-    rm -rf helpers/
-    rm -rf infra/
-    rm -rf tests/
-    rm -f .on-save.json
-    rm -f .gitlab-ci.yml
-    rm -f .gitignore
-    touch itworks
-    echo "it works!" > itworks
-
-
-mirror-to-github:
-  needs:
-    - job: clean-repo
   script:
+    - rm -rf GIT_CONTROLS/
+    - rm -rf helpers/
+    - rm -rf infra/
+    - rm -rf tests/
+    - rm -f .on-save.json
+    - rm -f .gitlab-ci.yml
+    - rm -rf .git
+    - rm -f .gitignore
+    - touch itworks
+    - echo "it works!" > itworks
+
     # Initialize a new git repository
     - git init
     - git config --global user.name 'GitHub Actions'
     - git config --global user.email 'actions@github.com'
 
     # Add new remote
-    - git remote set-url origin $GITHUB_REMOTE_URL
+    - git remote add origin $GITHUB_REMOTE_URL
 
     # Add, commit, and push changes
     - git add .

@@ -22,6 +22,7 @@ function auto_push {
   git push
 
 }
+
 grep "production = true" GIT_CONTROLS/auto_push && auto_push || echo "Auto push deactivated."
 
 function sync_to_stage {
