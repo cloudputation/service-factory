@@ -24,7 +24,7 @@ SOURCES := $(shell find $(SRC_DIR) -name '*.go' ! -path "$(EXCLUDE_DIR)/*" ! -na
 DOCKER_IMAGE := service-factory
 DOCKER_TAG := latest
 IMAGE_DISTRIBUTOR := cloudputation
-DOCKER_REGISTRY := registry.gitlab.com
+DOCKER_REGISTRY :=
 
 # Phony targets for make commands
 .PHONY: all build clean docker-build docker-push
