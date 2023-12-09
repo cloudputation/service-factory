@@ -48,6 +48,8 @@ deploy-service:
     - terraform -chdir=$(pwd)/infra/terraform apply -auto-approve -var nomad_server_address="http://${NOMAD_HOST}:4646" -var jobspec_path="$(pwd)/infra/nomad/jobspec.nomad"
 
 set-repo-for-github-release:
+  needs:
+    - job: deploy-service
   script:
     - rm -rf GIT_CONTROLS/
     - rm -rf helpers/
