@@ -46,6 +46,7 @@ type Gitlab struct {
 var AppConfig Configuration
 var ConfigPath string
 var RootDir string
+const MaxWorkers = 10
 
 var (
     DatastoreDir = "sf-data/repositories"

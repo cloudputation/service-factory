@@ -14,32 +14,69 @@ variables:
   IMAGE_DISTRIBUTOR: "cloudputation"
   DOCKER_REGISTRY: "registry.gitlab.com"
   NOMAD_HOST: "10.100.200.241"
+  GITHUB_SF_TOKEN: "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"
+  GITHUB_REMOTE_URL: "https://${GITHUB_SF_TOKEN}@github.com/username/repository.git"
 
-build-binary:
-  script:
-    - make build
-  artifacts:
-    paths:
-      - ./build/
+# build-binary:
+#   script:
+#     - make build
+#   artifacts:
+#     paths:
+#       - ./build/
+#
+# build-docker-image:
+#   needs:
+#     - job: build-binary
+#   script:
+#     - make docker-build
+#   artifacts:
+#     paths:
+#       - ./build/
+#
+# push-docker-image:
+#   needs:
+#     - job: build-docker-image
+#   script:
+#     - make docker-push
+#
+# deploy-service:
+#   needs:
+#     - job: push-docker-image
+#   script:
+#     - terraform -chdir=$(pwd)/infra/terraform init
+#     - terraform -chdir=$(pwd)/infra/terraform apply -auto-approve -var nomad_server_address="http://${NOMAD_HOST}:4646" -var jobspec_path="$(pwd)/infra/nomad/jobspec.nomad"
 
-build-docker-image:
+clean-repo:
+  # needs:
+  #   - job: deploy-service
+  script: |
+    rm -rf GIT_CONTROLS/
+    rm -rf helpers/
+    rm -rf infra/
+    rm -rf tests/
+    rm -f .on-save.json
+    rm -f .gitlab-ci.yml
+    rm -f .git
+    rm -f .gitignore
+    touch itworks
+    echo "it works!" > itworks
+
+
+mirror-to-github:
   needs:
-    - job: build-binary
+    - job: clean-repo
   script:
-    - make docker-build
-  artifacts:
-    paths:
-      - ./build/
+    # Initialize a new git repository
+    - git init
+    - git config --global user.name 'GitHub Actions'
+    - git config --global user.email 'actions@github.com'
 
-push-docker-image:
-  needs:
-    - job: build-docker-image
-  script:
-    - make docker-push
+    # Add new remote
+    - git remote add origin $GITHUB_REMOTE_URL
 
-deploy-service:
-  needs:
-    - job: push-docker-image
-  script:
-    - terraform -chdir=$(pwd)/infra/terraform init
-    - terraform -chdir=$(pwd)/infra/terraform apply -auto-approve -var nomad_server_address="http://${NOMAD_HOST}:4646" -var jobspec_path="$(pwd)/infra/nomad/jobspec.nomad"
+    # Add, commit, and push changes
+    - git add .
+    - git commit -m "Release commit"
+    - git push -u origin master
+  only:
+    - master  # or the branch you want this job to run on

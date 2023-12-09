@@ -53,7 +53,7 @@ func ApplyServiceSpecs(serviceFiles []string) error {
     } else {
         err = SendJSONPayload(string(wrapperJSON))
         if err != nil {
-            errorMsg := fmt.Sprintf("Failed to send JSON payload: %v", err)
+            errorMsg := fmt.Sprintf("Failed to send Service payload: %v", err)
             errors = append(errors, errorMsg)
         } else {
             l.Info("Payloads sent successfully!")
@@ -96,7 +96,7 @@ func ServiceHCLtoJSON(HCLFilePath string) (string, error) {
 func SendJSONPayload(jsonData string) error {
     serverAddress := config.AppConfig.Server.ServerAddress
     serverPort := config.AppConfig.Server.ServerPort
-    serverEndpoint := fmt.Sprintf("http://%s:%s/apply", serverAddress, serverPort)
+    serverEndpoint := fmt.Sprintf("http://%s:%s/v1/service/apply", serverAddress, serverPort)
 
     req, err := http.NewRequest("POST", serverEndpoint, bytes.NewBuffer([]byte(jsonData)))
     if err != nil {

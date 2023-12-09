@@ -40,7 +40,7 @@ func GetFactoryStatus() error {
 
 func GetServiceStatus(serviceName string) error {
   apiEndpoint := fmt.Sprintf(
-      "http://%s:%s/service/status?serviceName=%s",
+      "http://%s:%s/v1/service/status?serviceName=%s",
       config.AppConfig.Server.ServerAddress,
       config.AppConfig.Server.ServerPort,
       serviceName,

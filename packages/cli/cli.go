@@ -1,11 +1,13 @@
 package cli
 
 import (
+		"context"
 		"github.com/spf13/cobra"
 
 		"github.com/cloudputation/service-factory/packages/bootstrap"
     l "github.com/cloudputation/service-factory/packages/logger"
-		"github.com/cloudputation/service-factory/packages/server"
+		"github.com/cloudputation/service-factory/packages/api"
+		"github.com/cloudputation/service-factory/packages/stats"
 )
 
 
@@ -16,7 +18,7 @@ func SetupRootCommand() *cobra.Command {
 
 	var rootCmd = &cobra.Command{
 		Use:   "factory",
-		Short: "Service Factory is a comprehensive tool for managing service onboarding within your organization",
+		Short: "Service Factory is a comprehensive tool facilitates service onboarding within your organization by automating redundancies in repository creation.",
 	}
 	rootCmd.CompletionOptions.HiddenDefaultCmd = true
 
@@ -29,6 +31,7 @@ func SetupRootCommand() *cobra.Command {
 			err := CheckConfig()
 			if err != nil {
 				l.Error("Failed to parse configuration file: %v", err)
+				stats.ErrorCounter.Add(context.Background(), 1)
 			}
 		},
 	}
@@ -40,6 +43,7 @@ func SetupRootCommand() *cobra.Command {
 			err := ApplyServiceSpecs(serviceFiles)
 			if err != nil {
 				l.Error("Failed to parse service file: %v", err)
+				stats.ErrorCounter.Add(context.Background(), 1)
 			}
 		},
 	}
@@ -52,6 +56,7 @@ func SetupRootCommand() *cobra.Command {
 			err := DestroyService(serviceNames)
 			if err != nil {
 				l.Error("Failed to decommission services: %v", err)
+				stats.ErrorCounter.Add(context.Background(), 1)
 			}
 		},
 	}
@@ -65,7 +70,7 @@ func SetupRootCommand() *cobra.Command {
       if err != nil {
           l.Fatal("Failed to bootstrap the factory: %v", err)
       }
-			server.StartServer()
+			api.StartServer()
 		},
 	}
 
@@ -83,6 +88,7 @@ func SetupRootCommand() *cobra.Command {
 			err := GetServiceStatus(serviceName)
 			if err != nil {
 				l.Error("Failed to check service status: %v", err)
+				stats.ErrorCounter.Add(context.Background(), 1)
 			}
 		},
 	}
@@ -101,6 +107,7 @@ func SetupRootCommand() *cobra.Command {
 			err := GetFactoryStatus()
 			if err != nil {
 				l.Error("Failed to check server status %v", err)
+				stats.ErrorCounter.Add(context.Background(), 1)
 			}
 		},
 	}

@@ -1,6 +1,7 @@
-package server
+package v1
 
 import (
+    "os"
     "fmt"
     "sync"
     "strings"
@@ -41,12 +42,19 @@ func ApplyHandlerWrapper(w http.ResponseWriter, r *http.Request) {
 
 func ApplyHandler(w http.ResponseWriter, r *http.Request) {
   if r.Method != http.MethodPost {
+      err := http.StatusMethodNotAllowed
+      l.Error("Received an invalid request method: %v", err)
+      stats.ErrorCounter.Add(r.Context(), 1)
       http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
       return
   }
+  stats.ApplyEndpointCounter.Add(r.Context(), 1)
 
   var wrapper ServicesWrapper
   if err := json.NewDecoder(r.Body).Decode(&wrapper); err != nil {
+      err := http.StatusMethodNotAllowed
+      l.Error("Received an invalid request method: %v", err)
+      stats.ErrorCounter.Add(r.Context(), 1)
       http.Error(w, "Error reading request body", http.StatusBadRequest)
       return
   }
@@ -57,7 +65,7 @@ func ApplyHandler(w http.ResponseWriter, r *http.Request) {
   errors := make(chan error, len(wrapper.Services))
   var wg sync.WaitGroup
 
-  for w := 0; w < maxWorkers; w++ {
+  for w := 0; w < config.MaxWorkers; w++ {
       wg.Add(1)
       go worker(&wg, jobs, &appliedServices, &mutex, errors)
   }
@@ -75,6 +83,7 @@ func ApplyHandler(w http.ResponseWriter, r *http.Request) {
   for err := range errors {
       if err != nil {
           l.Error("Failed to process service spec: %v", err)
+          stats.ErrorCounter.Add(r.Context(), 1)
           hadError = true
       }
   }
@@ -129,10 +138,15 @@ func processServiceSpec(spec service.ServiceSpecs, appliedServices *[]string, mu
       return fmt.Errorf("Data directory not configured")
   }
 
-  cmd := exec.Command("mkdir", "-p", serviceRepoDir)
-  err := cmd.Run()
+  // cmd := exec.Command("mkdir", "-p", serviceRepoDir)
+  // err := cmd.Run()
+  // if err != nil {
+  //     return fmt.Errorf("Failed to create service directory: %v", err)
+  // }
+  //
+  err := os.MkdirAll(serviceRepoDir, 0755)
   if err != nil {
-      return fmt.Errorf("Failed to create service directory: %v", err)
+      return fmt.Errorf("Failed to create service directory '%s': %v", serviceRepoDir, err)
   }
 
   parts := strings.Split(templateName, "/")
@@ -157,7 +171,7 @@ func processServiceSpec(spec service.ServiceSpecs, appliedServices *[]string, mu
   }
 
 
-  cmd = exec.Command("cp", "-r", repoDatastorePath+"/.", serviceRepoDir)
+  cmd := exec.Command("cp", "-r", repoDatastorePath+"/.", serviceRepoDir)
   err = cmd.Run()
   if err != nil {
       return fmt.Errorf("Failed to copy repo template to service directory: %v", err)
@@ -218,7 +232,7 @@ func processServiceSpec(spec service.ServiceSpecs, appliedServices *[]string, mu
 
   repoAddress := fmt.Sprintf("https://%s.com/%s/%s", repoProvider, repoOwner, serviceName)
   httpCheck := fmt.Sprintf("http://"+
-  		"%s:%s/repo/status?repoProvider=%s&repoID=%s&repoOwner=%s&serviceName=%s",
+  		"%s:%s/v1/repo/status?repoProvider=%s&repoID=%s&repoOwner=%s&serviceName=%s",
   		SFHost,
   		SFPort,
       repoProvider,

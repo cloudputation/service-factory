@@ -11,9 +11,11 @@ import (
     l "github.com/cloudputation/service-factory/packages/logger"
 )
 
+
 type ServicesToDestroy struct {
     ServiceNames []string `json:"service-names"`
 }
+
 
 func DestroyService(serviceNames []string) error {
     services := ServicesToDestroy{ServiceNames: serviceNames}
@@ -23,7 +25,7 @@ func DestroyService(serviceNames []string) error {
     }
 
     apiEndpoint := fmt.Sprintf(
-        "http://%s:%s/destroy",
+        "http://%s:%s/v1/service/destroy",
         config.AppConfig.Server.ServerAddress,
         config.AppConfig.Server.ServerPort,
     )

@@ -1,4 +1,4 @@
-package server
+package v1
 
 import (
     "encoding/json"
@@ -30,13 +30,20 @@ func DestroyHandlerWrapper(w http.ResponseWriter, r *http.Request) {
 
 func DestroyHandler(w http.ResponseWriter, r *http.Request) {
   if r.Method != http.MethodPost {
+      err := http.StatusMethodNotAllowed
+      l.Error("Received an invalid request method: %v", err)
+      stats.ErrorCounter.Add(r.Context(), 1)
       http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
       return
   }
+  stats.DestroyEndpointCounter.Add(r.Context(), 1)
 
   var requestBody DestroyRequestBody
   if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
-      http.Error(w, "Error reading request body", http.StatusBadRequest)
+      err := http.StatusMethodNotAllowed
+      l.Error("Received an invalid request method: %v", err)
+      stats.ErrorCounter.Add(r.Context(), 1)
+      http.Error(w, "Error reading request body", err)
       return
   }
 
@@ -46,7 +53,7 @@ func DestroyHandler(w http.ResponseWriter, r *http.Request) {
   destroyedServices := make([]string, 0)
   var mutex sync.Mutex
 
-  for w := 0; w < maxWorkers; w++ {
+  for w := 0; w < config.MaxWorkers; w++ {
       wg.Add(1)
       go func() {
           defer wg.Done()
@@ -71,6 +78,7 @@ func DestroyHandler(w http.ResponseWriter, r *http.Request) {
   for err := range errors {
       if err != nil {
           l.Error("Failed to delete service: %v", err)
+          stats.ErrorCounter.Add(r.Context(), 1)
           hadError = true
       }
   }
