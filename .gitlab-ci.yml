@@ -29,6 +29,8 @@ build-docker-image:
   needs:
     - job: build-binary
   script:
+    - mkdir ./artifacts
+    - cp -r ${HOME}/working-dir/ci/runners/devel_ci/artifacts/sf_artifacts/* ./artifacts
     - sudo make docker-build
   artifacts:
     paths:
@@ -79,3 +81,10 @@ set-repo-for-github-release:
     - git push -u origin main --force
   only:
     - main
+
+
+clean-build:
+  needs:
+    - job: deploy-service
+  script:
+    - make clean-build

@@ -21,18 +21,4 @@ service {
     authoritative_server  = "10.100.200.241"
     client_hostname       = "comm1"
   }
-
-  // network {
-  //   parameter = value <- find this option first repo_service_name = ?
-  //   consul {
-  //     consul_host = "10.100.200.241"
-  //   }
-  // }
-  //
-  // scheduler {
-  //   parameter = value <- find this option first
-  //   nomad {
-  //     nomad_host  = "10.100.200.241"
-  //   }
-  // }
 }

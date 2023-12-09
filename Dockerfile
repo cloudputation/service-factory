@@ -19,7 +19,8 @@ ENV SF_DATA_DIRECTORY=${ROOTDIR}/sf-data
 ENV SF_TERRAFORM_DIRECTORY=${ROOTDIR}/terraform
 
 # BUILD values
-ENV	TERRAGRUNT_PATH="/usr/bin/terragrunt"
+ENV TERRAFORM_PATH="/usr/local/bin/terraform"
+ENV	TERRAGRUNT_PATH="/usr/local/bin/terragrunt"
 ENV TERRAGRUNT_VERSION="0.53.8"
 ENV TERRAGRUNT_URL=https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64
 
@@ -41,36 +42,43 @@ WORKDIR ${ROOTDIR}
 
 RUN apt update
 RUN apt install -y \
-	dumb-init \
-	gnupg \
-	software-properties-common
+	dumb-init
 
-RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
-      gpg --dearmor | \
-      tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
-
-RUN gpg --no-default-keyring \
-      --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
-      --fingerprint
-
-RUN echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg]\
-      https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
-      tee /etc/apt/sources.list.d/hashicorp.list
-
-RUN apt update
-RUN apt -y install terraform
-RUN echo TERRAFORM HAS BEEN INSTALLED! - $(terraform version)
-
-
-
-RUN wget ${TERRAGRUNT_URL} -O ${TERRAGRUNT_PATH}
-RUN chmod +x ${TERRAGRUNT_PATH}
-RUN echo TERRAGRUNT HAS BEEN INSTALLED! - $(terragrunt --version)
+# 	gnupg \
+# 	software-properties-common
+#
+# RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
+#       gpg --dearmor | \
+#       tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+#
+# RUN gpg --no-default-keyring \
+#       --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+#       --fingerprint
+#
+# RUN echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg]\
+#       https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+#       tee /etc/apt/sources.list.d/hashicorp.list
+#
+# RUN apt update
+# RUN apt -y install terraform
+# RUN echo TERRAFORM HAS BEEN INSTALLED! - $(terraform version)
+#
+#
+#
+# RUN wget ${TERRAGRUNT_URL} -O ${TERRAGRUNT_PATH}
+# RUN chmod +x ${TERRAGRUNT_PATH}
+# RUN echo TERRAGRUNT HAS BEEN INSTALLED! - $(terragrunt --version)
 
 
 COPY ./terraform/ ./terraform/
 COPY ./API_VERSION ./API_VERSION
 
+
+COPY ./artifacts/terraform ${TERRAFORM_PATH}
+RUN echo TERRAFORM HAS BEEN INSTALLED! - $(terraform version)
+
+COPY ./artifacts/terragrunt ${TERRAGRUNT_PATH}
+RUN echo TERRAGRUNT HAS BEEN INSTALLED! - $(terragrunt --version)
 
 COPY ./build/service-factory /bin/service-factory
 COPY ./.release/defaults/config.hcl /sf/config/config.hcl

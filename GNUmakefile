@@ -11,6 +11,7 @@ SRC_DIR := .
 
 # Build directory
 BUILD_DIR := ./build
+ARTIFACTS_DIR := ./artifacts
 
 # Exclude specific directories and/or file patterns
 EXCLUDE_DIR := ./tests
@@ -66,3 +67,4 @@ docker-push:
 clean:
 	@echo "Cleaning up..."
 	@rm -rf $(BUILD_DIR)
+	@rm -rf $(ARTIFACTS_DIR)
