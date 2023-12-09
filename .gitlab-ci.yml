@@ -53,16 +53,16 @@ set-repo-for-github-release:
   needs:
     - job: deploy-service
   script:
+    - rm -rf .git
     - rm -rf GIT_CONTROLS/
     - rm -rf helpers/
     - rm -rf infra/
     - rm -rf tests/
+    - rm -f .air.toml
     - rm -f .on-save.json
     - rm -f .gitlab-ci.yml
-    - rm -rf .git
     - rm -f .gitignore
-    - touch itworks
-    - echo "it works!" > itworks
+
 
     # Initialize a new git repository
     - git init
@@ -87,4 +87,4 @@ clean-build:
   needs:
     - job: deploy-service
   script:
-    - make clean-build
+    - make clean

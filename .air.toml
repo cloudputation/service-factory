@@ -1,0 +1,51 @@
+# .air.toml
+# Air configuration file
+
+# Root directory. Default is `.`
+root = "."
+# Temp build directory. Default is `tmp`
+tmp_dir = "tmp"
+
+[build]
+  # Just plain old shell command. Default is `go build -o ./tmp/main .`
+  cmd = "bash helpers/docker_rebuild.sh"
+  # Binary file yields from `cmd`.
+  bin = "tmp/main"
+  # Customize binary.
+  full_bin = "APP_ENV=development ./tmp/main"
+  # Include extension to build. Default is `go`
+  include_ext = ["go"]
+  # Exclude directories.
+  exclude_dir = ["tests", "terraform/providers/gitlab/services"]
+  # Include files.
+  include_file = ["Dockerfile"]
+  # Exclude files.
+  exclude_file = []
+  # Exclude specific file types.
+  exclude_regex = ["_test.go"]
+  # Time delay between builds. Default is `1000ms`.
+  delay = 1000
+  # Stop running old binary when build errors occur. Default is `false`.
+  stop_on_error = true
+  # Watch these filename extensions. Default is `go`.
+  watch_ext = ["go"]
+  # Watch these directories. Default is `.`.
+  watch_dir = [".", "packages/*"]
+  # Watch these files.
+  watch_file = ["Dockerfile"]
+
+[log]
+  # Show log time. Default is `true`.
+  time = true
+
+[color]
+  # Customize each part's color.
+  # If no color found, use the raw app log.
+  main = "magenta"
+  watcher = "cyan"
+  build = "yellow"
+  runner = "green"
+
+[misc]
+  # Delete tmp directory on exit. Default is `true`.
+  clean_on_exit = true
