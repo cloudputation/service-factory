@@ -15,7 +15,7 @@ variables:
   DOCKER_REGISTRY: "registry.gitlab.com"
   NOMAD_HOST: "10.100.200.241"
   GITHUB_SF_TOKEN: "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"
-  GITHUB_REMOTE_URL: "https://${GITHUB_SF_TOKEN}@github.com:cloudputation/service-factory.git"
+  GITHUB_REMOTE_URL: "https://${GITHUB_SF_TOKEN}@github.com/cloudputation/service-factory.git"
 
 # build-binary:
 #   script:
