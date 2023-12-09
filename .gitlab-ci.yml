@@ -68,6 +68,9 @@ mirror-to-github:
 
     # Add new remote
     - git remote add origin $GITHUB_REMOTE_URL
+    
+    # Create and switch to the 'main' branch
+    - git checkout -b main
 
     # Add, commit, and push changes
     - git add .
