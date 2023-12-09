@@ -79,4 +79,4 @@ mirror-to-github:
     - git commit -m "Release commit"
     - git push -u origin master
   only:
-    - master  # or the branch you want this job to run on
+    - main  # or the branch you want this job to run on
