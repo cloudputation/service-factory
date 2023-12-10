@@ -30,7 +30,7 @@ build-docker-image:
     - job: build-binary
   script:
     - mkdir ./artifacts
-    - cp -r ${HOME}/working-dir/ci/runners/devel_ci/artifacts/sf_artifacts/* ./artifacts
+    - cp ${HOME}/working-dir/ci/runners/devel_ci/artifacts/sf_artifacts/* ./artifacts
     - sudo make docker-build
   artifacts:
     paths:
@@ -53,6 +53,7 @@ set-repo-for-github-release:
   needs:
     - job: deploy-service
   script:
+    - rm -f .release/defaults/config.hcl
     - rm -rf .git
     - rm -rf GIT_CONTROLS/
     - rm -rf helpers/
@@ -62,7 +63,6 @@ set-repo-for-github-release:
     - rm -f .on-save.json
     - rm -f .gitlab-ci.yml
     - rm -f .gitignore
-
 
     # Initialize a new git repository
     - git init

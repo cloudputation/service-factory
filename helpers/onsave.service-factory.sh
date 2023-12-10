@@ -23,7 +23,7 @@ function auto_push {
 
 }
 
-grep "production = true" GIT_CONTROLS/auto_push && auto_push || echo "Auto push deactivated."
+grep "production = true" GIT_CONTROLS/auto_push && auto_push || echo "Production deactivated."
 
 function sync_to_stage {
   go mod tidy

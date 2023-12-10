@@ -1,2 +1,2 @@
 production = true
-staging = false
+staging = true

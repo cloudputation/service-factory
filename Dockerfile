@@ -44,31 +44,6 @@ RUN apt update
 RUN apt install -y \
 	dumb-init
 
-# 	gnupg \
-# 	software-properties-common
-#
-# RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
-#       gpg --dearmor | \
-#       tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
-#
-# RUN gpg --no-default-keyring \
-#       --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
-#       --fingerprint
-#
-# RUN echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg]\
-#       https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
-#       tee /etc/apt/sources.list.d/hashicorp.list
-#
-# RUN apt update
-# RUN apt -y install terraform
-# RUN echo TERRAFORM HAS BEEN INSTALLED! - $(terraform version)
-#
-#
-#
-# RUN wget ${TERRAGRUNT_URL} -O ${TERRAGRUNT_PATH}
-# RUN chmod +x ${TERRAGRUNT_PATH}
-# RUN echo TERRAGRUNT HAS BEEN INSTALLED! - $(terragrunt --version)
-
 
 COPY ./terraform/ ./terraform/
 COPY ./API_VERSION ./API_VERSION

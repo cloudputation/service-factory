@@ -6,7 +6,10 @@ DOCKER_SF_DATA="/sf/sf-data"
 
 sudo docker stop sf || true
 sudo docker rm sf || true
-make docker-build
+mkdir -p ./artifacts
+cp ${HOME}/dev/artifacts/sf_artifacts/* ./artifacts
+
+sudo make docker-build
 
 if [ $? -eq 1 ]; then
     echo "make docker-build failed with exit code 1"
