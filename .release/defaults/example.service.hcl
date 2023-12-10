@@ -1,7 +1,7 @@
 service {
-  name    = "test-service11"
+  name    = "test-service"
   group   = "test-apis"
-  port    = "9900"
+  port    = "1337"
   tags    = ["SF-Managed"]
 
   template {
@@ -11,14 +11,14 @@ service {
 
   repo {
     provider          = "gitlab"
-    namespace_id      = "69638879"
-    runner_id         = "20665767"
-    registry_token    = "glpat-kuuxn3oXxwBsCMkxssDY"
+    namespace_id      = REPOSITORY_ID
+    runner_id         = RUNNER_ID
+    registry_token    = GITLAB_REGISTRY_TOKEN
     repository_owner  = "franksrobins"
   }
 
   network {
-    authoritative_server  = "10.100.200.241"
-    client_hostname       = "comm1"
+    authoritative_server  = "127.0.0.1"
+    client_hostname       = "backend1"
   }
 }
