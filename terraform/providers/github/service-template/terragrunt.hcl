@@ -19,17 +19,17 @@ generate "providers" {
   path      = "providers.tf"
   if_exists = "overwrite"
   contents  = <<-EOC
-    variable "gitlab_api_url" {
-      description = "Gitlab API base URL"
+    variable "github_api_url" {
+      description = "GitHub API base URL"
       type        = string
-      default     = "https://gitlab.com/api/v4/"
+      default     = "https://api.github.com/"
     }
 
     terraform {
       required_providers {
-        gitlab = {
-          source = "gitlabhq/gitlab"
-          version = "16.6.0"
+        github = {
+          source = "integrations/github"
+          version = "5.42.0"
         }
         consul = {
           source  = "hashicorp/consul"
@@ -38,9 +38,9 @@ generate "providers" {
       }
     }
 
-    provider "gitlab" {
+    provider "github" {
       token     = "${local.config.api_token}"
-      base_url  = var.gitlab_api_url
+      base_url  = var.github_api_url
     }
 
     provider "consul" {

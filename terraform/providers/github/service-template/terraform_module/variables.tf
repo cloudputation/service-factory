@@ -23,12 +23,6 @@ variable "repository_owner" {
   description = "The owner of the repository"
   type        = string
 }
-#
-variable "runner_id" {
-  description = "The ID of the runner"
-  type        = string
-  sensitive   = true
-}
 
 variable "commit_message" {
   description = "The commit message for the new file"
@@ -51,5 +45,5 @@ variable "author_name" {
 // Get project files
 locals {
   all_files = fileset("${var.data_dir}/services/${var.repo_name}/repo", "/**/*")
-  filtered_files = { for file in local.all_files : file => file if file != ".gitlab-ci.yml" }
+  filtered_files = { for file in local.all_files : file => file if file != ".github/workflows/ci.yml" }
 }
