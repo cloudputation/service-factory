@@ -31,7 +31,7 @@ resource "github_repository_file" "ci_file" {
   repository      = github_repository.project.name
   file            = ".github/workflows/ci.yml"
   branch          = "main"
-  content         = file("${var.data_dir}/services/${var.repo_name}/repo/.github/workflows/ci.yml")
+  content         = file("${var.data_dir}/services/${var.repo_name}/repo/.github/workflows/action.yml")
   commit_author   = var.author_name
   commit_email    = var.author_email
   commit_message  = var.commit_message
