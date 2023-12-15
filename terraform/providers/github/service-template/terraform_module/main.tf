@@ -48,9 +48,9 @@ resource "consul_keys" "manifest_key" {
     path   = "${var.consul_path}/${var.repo_name}"
     value  = jsonencode({
         "service_id": var.service_id,
-        "repo_provider": "github",
-        "repo_owner": var.repository_owner,
-        "repo_id": github_repository.project.id
+        "repository_provider": "github",
+        "repository_owner": var.repository_owner,
+        "repository_id": github_repository.project.id
     })
   }
 
