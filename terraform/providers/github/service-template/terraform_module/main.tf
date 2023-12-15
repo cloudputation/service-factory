@@ -1,11 +1,8 @@
 // Create new repository
 resource "github_repository" "project" {
   name          = var.repo_name
-  visibility    = "private"
-  has_issues    = true
-  has_projects  = true
-  has_wiki      = false
-  // Additional GitHub-specific configurations
+  private       = true
+  description   = "placeholder description"
 }
 
 // Upload project files
@@ -14,7 +11,7 @@ resource "github_repository_file" "files" {
 
   repository    = github_repository.project.name
   file          = "${each.key}"
-  branch        = "master"
+  branch        = "main"
   content       = file("${var.data_dir}/services/${var.repo_name}/repo/${each.key}")
   commit_author   = var.author_name
   commit_email    = var.author_email
@@ -29,7 +26,7 @@ resource "github_repository_file" "files" {
 // Upload CI file
 resource "github_repository_file" "ci_file" {
   repository      = github_repository.project.name
-  file            = ".github/workflows/ci.yml"
+  file            = ".github/workflows/action.yml"
   branch          = "main"
   content         = file("${var.data_dir}/services/${var.repo_name}/repo/.github/workflows/action.yml")
   commit_author   = var.author_name
