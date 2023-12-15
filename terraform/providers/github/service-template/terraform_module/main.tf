@@ -1,8 +1,9 @@
 // Create new repository
 resource "github_repository" "project" {
   name          = var.repo_name
-  private       = true
+  visibility    = "private"
   description   = "placeholder description"
+  auto_init     = true
 }
 
 // Upload project files
