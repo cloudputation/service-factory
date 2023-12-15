@@ -1,6 +1,6 @@
 // Define repo variables
-variable "root_dir" {
-  description = "Service Factory root directory"
+variable "consul_path" {
+  description = "Service Factory consul path"
   type        = string
 }
 

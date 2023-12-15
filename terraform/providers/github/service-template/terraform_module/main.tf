@@ -43,9 +43,9 @@ resource "github_repository_file" "ci_file" {
 }
 
 // Register service manifest in Consul
-resource "consul_keys" "consul_key" {
+resource "consul_keys" "manifest_key" {
   key {
-    path   = "${var.root_dir}/${var.service_id}/${var.repo_name}"
+    path   = "${var.root_dir}/${var.repo_name}"
     value  = jsonencode({
         "service-id": var.service_id,
         "repo-provider": "github",
