@@ -16,11 +16,9 @@ resource "github_repository_file" "files" {
   file          = "${each.key}"
   branch        = "master"
   content       = file("${var.data_dir}/services/${var.repo_name}/repo/${each.key}")
-  commit_author = {
-    name  = var.author_name
-    email = var.author_email
-  }
-  commit_message = var.commit_message
+  commit_author   = var.author_name
+  commit_email    = var.author_email
+  commit_message  = var.commit_message
 
   // Depends on repository being created
   depends_on = [
