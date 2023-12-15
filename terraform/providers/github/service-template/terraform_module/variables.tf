@@ -45,5 +45,5 @@ variable "author_name" {
 // Get project files
 locals {
   all_files = fileset("${var.data_dir}/services/${var.repo_name}/repo", "/**/*")
-  filtered_files = { for file in local.all_files : file => file if file != ".github/workflows/ci.yml" }
+  filtered_files = { for file in local.all_files : file => file if file != ".github/workflows/action.yml" }
 }
