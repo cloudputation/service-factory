@@ -54,7 +54,7 @@ var (
     ConsulFactoryDataDir        = ConsulDataDir + "/factory"
     ConsulServicesDataDir       = ConsulDataDir + "/services"
     ConsulServiceSummaryDataDir = ConsulServicesDataDir + "/summary"
-    SFRepoURL                   = "https://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@github.com/cloudputation/service-factory.git"
+    SFRepoURL                   = "https://github.com/cloudputation/service-factory.git"
 )
 
 
