@@ -39,7 +39,7 @@ build: $(SOURCES)
 	@GO111MODULE=on go mod download
 	@echo "Building $(BINARY_NAME)..."
 	@mkdir -p $(BUILD_DIR)
-	@GO111MODULE=on go build -o $(BUILD_DIR)/$(BINARY_NAME) $(SRC_DIR)
+	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -o $(BUILD_DIR)/$(BINARY_NAME) $(SRC_DIR)
 
 
 # Build the binary as standalone

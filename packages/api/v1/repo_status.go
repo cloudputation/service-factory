@@ -41,15 +41,18 @@ func ProcessRepoChecks(w http.ResponseWriter, r *http.Request){
   repoOwner     := r.URL.Query().Get("repoOwner")
   serviceName   := r.URL.Query().Get("serviceName")
   repoProvider  := r.URL.Query().Get("repoProvider")
-  repoToken     := config.AppConfig.Repo.Gitlab.AccessToken
 
 
   var url string
+  var repoToken string
+
   switch repoProvider {
   case "github":
-      url = fmt.Sprintf("https://api.github.com/repos")
+      url = fmt.Sprintf("https://api.github.com/repos/%s/%s", repoOwner, serviceName)
+      repoToken = config.AppConfig.Repository.Github.AccessToken
   case "gitlab":
       url = fmt.Sprintf("https://gitlab.com/api/v4/projects/%s", repoID)
+      repoToken = config.AppConfig.Repository.Gitlab.AccessToken
   default:
       l.Error("Invalid repository provider", http.StatusBadRequest)
       stats.ErrorCounter.Add(r.Context(), 1)
@@ -76,7 +79,11 @@ func ProcessRepoChecks(w http.ResponseWriter, r *http.Request){
   }
 
   if repoToken != "" {
-      req.Header.Add("PRIVATE-TOKEN", repoToken)
+      if repoProvider == "github" {
+          req.Header.Add("Authorization", "Bearer " + repoToken)
+      } else if repoProvider == "gitlab" {
+          req.Header.Add("PRIVATE-TOKEN", repoToken)
+      }
   }
 
   resp, err := client.Do(req)

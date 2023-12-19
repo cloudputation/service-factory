@@ -7,6 +7,7 @@ import (
     "fmt"
 )
 
+
 const (
     LogLevelDebug = iota
     LogLevelInfo
@@ -17,7 +18,9 @@ var currentLogLevel = LogLevelInfo
 var logFile *os.File
 
 
-func InitLogger(logFilePath string) error {
+func InitLogger(logDirPath string) error {
+    logFileName := "sf.log"
+    logFilePath := logDirPath + "/" + logFileName
     logFile, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
     if err != nil {
         return fmt.Errorf("Failed to open log file at path %s: %v", logFilePath, err)

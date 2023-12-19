@@ -31,7 +31,7 @@ type ServicesWrapper struct {
 }
 
 
-var spec service.ServiceSpecs
+var specs service.ServiceSpecs
 var terraformToApply []string
 var runTerraformMutex sync.Mutex
 
@@ -82,7 +82,7 @@ func ApplyHandler(w http.ResponseWriter, r *http.Request) {
   var hadError bool
   for err := range errors {
       if err != nil {
-          l.Error("Failed to process service spec: %v", err)
+          l.Error("Failed to process service specs: %v", err)
           stats.ErrorCounter.Add(r.Context(), 1)
           hadError = true
       }
@@ -101,36 +101,29 @@ func ApplyHandler(w http.ResponseWriter, r *http.Request) {
 
 func worker(wg *sync.WaitGroup, jobs <-chan service.ServiceSpecs, appliedServices *[]string, mutex *sync.Mutex, errors chan<- error) {
   defer wg.Done()
-  for spec := range jobs {
-      if err := processServiceSpec(spec, appliedServices, mutex); err != nil {
+  for specs := range jobs {
+      if err := ProcessServiceSpec(specs, appliedServices, mutex); err != nil {
           errors <- err
       }
   }
 }
 
-func processServiceSpec(spec service.ServiceSpecs, appliedServices *[]string, mutex *sync.Mutex) error {
+func ProcessServiceSpec(specs service.ServiceSpecs, appliedServices *[]string, mutex *sync.Mutex) error {
   var (
       UUID                  = uuid.New()
       dataDir               = config.AppConfig.DataDir
       SFHost                = config.AppConfig.Server.ServerAddress
       SFPort                = config.AppConfig.Server.ServerPort
-      terraformDir          = config.AppConfig.Terraform.TerraformDir
-      rootDir               = config.RootDir
+      terraformDir          = config.AppConfig.DataDir + "/terraform"
       datastoreDir          = config.DatastoreDir
-      serviceName           = spec.Service.Name
-      serviceTags           = spec.Service.Tags
-      templateURL           = spec.Service.Template.TemplateURL
-      templateName          = spec.Service.Template.TemplateName
-      repoOwner             = spec.Service.Repo.RepositoryOwner
-      repoProvider          = spec.Service.Repo.Provider
-      runnerID              = spec.Service.Repo.RunnerID
+      serviceName           = specs.Service.Name
+      serviceTags           = specs.Service.Tags
+      templateURL           = specs.Service.Template.TemplateURL
+      templateName          = specs.Service.Template.TemplateName
       serviceID             = fmt.Sprintf("%s-%s", serviceName, UUID)
       serviceBaseDir        = filepath.Join(dataDir, "services", serviceName)
       serviceRepoDir        = filepath.Join(serviceBaseDir, "repo")
-      terraformProviderDir  = filepath.Join(rootDir, terraformDir, "providers", repoProvider)
-      terraformTemplateDir  = filepath.Join(terraformProviderDir, "service-template")
       terraformServiceDir   = filepath.Join(dataDir, "services", serviceName, "terraform")
-      terraformModuleDir    = filepath.Join(terraformServiceDir, "terraform_module")
   )
 
 
@@ -138,12 +131,6 @@ func processServiceSpec(spec service.ServiceSpecs, appliedServices *[]string, mu
       return fmt.Errorf("Data directory not configured")
   }
 
-  // cmd := exec.Command("mkdir", "-p", serviceRepoDir)
-  // err := cmd.Run()
-  // if err != nil {
-  //     return fmt.Errorf("Failed to create service directory: %v", err)
-  // }
-  //
   err := os.MkdirAll(serviceRepoDir, 0755)
   if err != nil {
       return fmt.Errorf("Failed to create service directory '%s': %v", serviceRepoDir, err)
@@ -170,7 +157,6 @@ func processServiceSpec(spec service.ServiceSpecs, appliedServices *[]string, mu
       return fmt.Errorf("Failed download repository to datastore: %v", err)
   }
 
-
   cmd := exec.Command("cp", "-r", repoDatastorePath+"/.", serviceRepoDir)
   err = cmd.Run()
   if err != nil {
@@ -190,59 +176,60 @@ func processServiceSpec(spec service.ServiceSpecs, appliedServices *[]string, mu
   }
 
   for tplFile, outputFile := range cookieCutterFiles {
-      err = service.RenderTemplate(tplFile, outputFile, spec)
+      err = service.RenderTemplate(tplFile, outputFile, specs)
       if err != nil {
           return fmt.Errorf("Failed to render the template: %v", err)
       }
   }
   l.Info("Rending done for service: %s", serviceName)
 
-  cmd = exec.Command("cp", "-r", terraformTemplateDir+"/.", terraformServiceDir)
-  err = cmd.Run()
-  if err != nil {
-      return fmt.Errorf("Failed to copy terraform directory: %v", err)
-  }
+  repoVars := terraform.GetRepoVars(specs.Service.Repository)
+  if len(repoVars) > 0 {
+        repoOwner := repoVars["repository_owner"]
+        repoProvider := repoVars["provider"]
+        terraformProviderDir := filepath.Join(terraformDir, "providers", repoProvider)
+        terraformTemplateDir := filepath.Join(terraformProviderDir, "service-template")
 
-  templatePath := filepath.Join(terraformModuleDir, "template.tf.tmpl")
-  outputPath := filepath.Join(terraformModuleDir, "main.tf")
+        cmd = exec.Command("cp", "-r", terraformTemplateDir+"/.", terraformServiceDir)
+        err = cmd.Run()
+        if err != nil {
+            return fmt.Errorf("Failed to copy terraform directory to service workspace: %v", err)
+        }
 
-  err = terraform.RenderTerraform(serviceID, serviceName, repoProvider, repoOwner, runnerID, templatePath, outputPath, serviceTags)
-  if err != nil {
-      return fmt.Errorf("Error: %v", err)
-  }
-  l.Info("Terraform template processed successfully.")
+        terraform.GenerateTerraformConfig(terraformServiceDir, serviceName, repoProvider)
+        terraformCmd := "apply"
+        err := terraform.RunTerraform(terraformServiceDir, terraformCmd, serviceID, serviceName, repoVars)
+        if err != nil {
+            return fmt.Errorf("Failed to run terraform for provider %s: %v", repoProvider, err)
+        }
 
-  terraform.GenerateTerraformConfig(terraformServiceDir, serviceName)
-  terraformCmd := "apply"
-  err = terraform.RunTerraform(terraformServiceDir, terraformCmd, serviceID, serviceName)
-  if err != nil {
-      return fmt.Errorf("Failed to run terraform: %v", err)
-  }
+          consulServiceDir := config.ConsulServicesDataDir
+          keyPath := fmt.Sprintf("%s/%s", consulServiceDir, serviceName)
+          consulServiceData, err := consul.ConsulStoreGet(keyPath)
+          if err != nil {
+              return fmt.Errorf("Failed to fetch factory state: %v", err)
+          }
 
-  consulServiceDir := config.ConsulServicesDataDir
-  keyPath := fmt.Sprintf("%s/%s", consulServiceDir, serviceName)
-  consulServiceData, err := consul.ConsulStoreGet(keyPath)
-  if err != nil {
-      return fmt.Errorf("Failed to fetch factory state: %v", err)
-  }
+          var (
+              repoID, _  = consulServiceData["repo_id"].(string)
+          )
 
-  var (
-      repoID, _  = consulServiceData["repo-id"].(string)
-  )
+          repoAddress := fmt.Sprintf("https://%s.com/%s/%s", repoProvider, repoOwner, serviceName)
+          httpCheck := fmt.Sprintf("http://"+
+          		"%s:%s/v1/repo/status?repoProvider=%s&repoID=%s&repoOwner=%s&serviceName=%s",
+          		SFHost,
+          		SFPort,
+              repoProvider,
+          		repoID,
+          		repoOwner,
+          		serviceName,
+        	)
 
-  repoAddress := fmt.Sprintf("https://%s.com/%s/%s", repoProvider, repoOwner, serviceName)
-  httpCheck := fmt.Sprintf("http://"+
-  		"%s:%s/v1/repo/status?repoProvider=%s&repoID=%s&repoOwner=%s&serviceName=%s",
-  		SFHost,
-  		SFPort,
-      repoProvider,
-  		repoID,
-  		repoOwner,
-  		serviceName,
-	)
-  err = consul.RegisterRepo(serviceID, serviceName, repoAddress, httpCheck, serviceTags)
-  if err != nil {
-      return fmt.Errorf("Failed to register repository to Consul: %v", err)
+          err = consul.RegisterRepo(serviceID, serviceName, repoAddress, httpCheck, serviceTags)
+          if err != nil {
+              return fmt.Errorf("Failed to register repository to Consul: %v", err)
+          }
+
   }
 
   err = stats.GenerateState()
@@ -250,7 +237,7 @@ func processServiceSpec(spec service.ServiceSpecs, appliedServices *[]string, mu
       return fmt.Errorf("Failed to get factory info: %v", err)
   }
   mutex.Lock()
-  *appliedServices = append(*appliedServices, spec.Service.Name)
+  *appliedServices = append(*appliedServices, specs.Service.Name)
   mutex.Unlock()
 
 

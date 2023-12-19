@@ -19,21 +19,26 @@ service {
 
   secrets {
     vault {
-      vault_host    = "10.100.200.241"
+      vault_host    = "127.0.0.1"
     }
   }
 
   network {
     consul {
-      consul_host       = "10.100.200.241"
+      consul_host       = "127.0.0.1"
       repo_service_name = "service-repository"
     }
   }
 
   scheduler {
+    count = "2"
     nomad {
-      nomad_host    = "10.100.200.241"
-      target_host   = "comm1"
+      nomad_host  = "127.0.0.1"
+      scheduler_constraint {
+        attribute = "$${attr.uniq.hostname}"
+        operator  = "="
+        value     = "backend1"
+      }
     }
   }
 

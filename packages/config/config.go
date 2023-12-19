@@ -11,12 +11,11 @@ import (
 
 
 type Configuration struct {
-    LogDir     string    `hcl:"log_dir"`
-    DataDir    string    `hcl:"data_dir"`
-    Server     Server    `hcl:"server,block"`
-    Consul     Consul    `hcl:"consul,block"`
-    Terraform  Terraform `hcl:"terraform,block"`
-    Repo       Repo      `hcl:"repo,block"`
+    LogDir      string      `hcl:"log_dir"`
+    DataDir     string      `hcl:"data_dir"`
+    Server      Server      `hcl:"server,block"`
+    Consul      Consul      `hcl:"consul,block"`
+    Repository  Repository  `hcl:"repository,block"`
 }
 
 type Server struct {
@@ -29,18 +28,18 @@ type Consul struct {
     ConsulToken string `hcl:"consul_token"`
 }
 
-type Terraform struct {
-    TerraformDir string `hcl:"terraform_dir"`
-}
-
-type Repo struct {
-    Gitlab Gitlab `hcl:"gitlab,block"`
+type Repository struct {
+    Gitlab  *Gitlab `hcl:"gitlab,block"`
+    Github  *Github `hcl:"github,block"`
 }
 
 type Gitlab struct {
     AccessToken string `hcl:"access_token"`
 }
 
+type Github struct {
+    AccessToken string `hcl:"access_token"`
+}
 
 
 var AppConfig Configuration
@@ -49,12 +48,13 @@ var RootDir string
 const MaxWorkers = 10
 
 var (
-    DatastoreDir = "sf-data/repositories"
-    ConsulDataDir = "sf::Data"
-    ConsulTerraformDataDir = ConsulDataDir + "/factory/terraform"
-    ConsulFactoryDataDir = ConsulDataDir + "/factory"
-    ConsulServicesDataDir = ConsulDataDir + "/services"
+    DatastoreDir                = "sf-data/repositories"
+    ConsulDataDir               = "sf::Data"
+    ConsulTerraformDataDir      = ConsulDataDir + "/factory/terraform"
+    ConsulFactoryDataDir        = ConsulDataDir + "/factory"
+    ConsulServicesDataDir       = ConsulDataDir + "/services"
     ConsulServiceSummaryDataDir = ConsulServicesDataDir + "/summary"
+    SFRepoURL                   = "https://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@github.com/cloudputation/service-factory.git"
 )
 
 
@@ -88,7 +88,6 @@ func LoadConfiguration() error {
   if diags.HasErrors() {
       return fmt.Errorf("Failed to apply configuration: %v", diags)
   }
-
 
   return nil
 }

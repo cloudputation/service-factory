@@ -7,9 +7,9 @@ import (
     "github.com/cloudputation/service-factory/packages/config"
     "github.com/cloudputation/service-factory/packages/consul"
     l "github.com/cloudputation/service-factory/packages/logger"
+    "github.com/cloudputation/service-factory/packages/terraform"
     "github.com/cloudputation/service-factory/packages/stats"
 )
-
 
 func BootstrapFactory() error {
   l.Info("Starting Service Factory agent.. Bootstrapping factory.")
@@ -33,12 +33,17 @@ func BootstrapFactory() error {
       return fmt.Errorf("Could not bootstrap factory on Consul: %v", err)
   }
 
+  if err := terraform.ImportTerraform(); err != nil {
+      fmt.Errorf("Failed to import terraform repository: %v", err)
+  }
+
   l.Info("Refreshing factory state.")
   err = stats.GenerateState()
   if err != nil {
       return fmt.Errorf("Failed to generate factory state: %v", err)
   }
   l.Info("Factory state created successfully!")
+  l.Info("Factory bootstrapping done!")
 
 
   return nil

@@ -3,45 +3,38 @@ package terraform
 import (
     "fmt"
     "os"
-    "text/template"
     "path/filepath"
     "os/exec"
     "strings"
 
     "github.com/cloudputation/service-factory/packages/config"
     l "github.com/cloudputation/service-factory/packages/logger"
+    "github.com/cloudputation/service-factory/packages/service"
 )
-
-
-type TemplateData struct {
-  SFHost            string
-  SFPort            string
-  DataDir           string
-  ServiceID         string
-  SerialServiceID   string
-  ServiceName       string
-  ServiceTags       []string
-  RepoProvider      string
-  RepoOwner         string
-  RunnerID          string
-  ConsulServiceData string
-}
 
 
 func RunTerraform(
   terraformDir,
   terraformCmd,
   ServiceID,
-  serviceName   string,
+  serviceName string,
+  repoVars    map[string]string,
   ) error {
   args := []string{
     terraformCmd,
     "-auto-approve",
     "--terragrunt-non-interactive",
     "--terragrunt-working-dir", terraformDir,
+    "-var", fmt.Sprintf("consul_path=%s", config.ConsulServicesDataDir),
     "-var", fmt.Sprintf("data_dir=%s/%s", config.RootDir, config.AppConfig.DataDir),
     "-var", fmt.Sprintf("service_id=%s", ServiceID),
     "-var", fmt.Sprintf("repo_name=%s", serviceName),
+  }
+
+  for key, value := range repoVars {
+      if key != "namespace_id" && key != "provider" && key != "registry_token" {
+        args = append(args, "-var", fmt.Sprintf("%s=%s", key, value))
+      }
   }
 
   commandString := "terragrunt " + strings.Join(args, " ")
@@ -59,11 +52,19 @@ func RunTerraform(
   return nil
 }
 
-func GenerateTerraformConfig(configPath, serviceName string) error {
+func GenerateTerraformConfig(configPath, serviceName , repoProvider string) error {
+  var repoToken string
+
   consulTerraformDir  := config.ConsulFactoryDataDir
   consulToken         := config.AppConfig.Consul.ConsulToken
   consulAddress       := config.AppConfig.Consul.ConsulHost
-  gitlabToken         := config.AppConfig.Repo.Gitlab.AccessToken
+
+  if repoProvider == "github" {
+      repoToken = config.AppConfig.Repository.Github.AccessToken
+  } else if repoProvider == "gitlab" {
+      repoToken = config.AppConfig.Repository.Gitlab.AccessToken
+  }
+
 
   configPath = fmt.Sprintf("%s/config.yaml", configPath)
 
@@ -78,9 +79,9 @@ func GenerateTerraformConfig(configPath, serviceName string) error {
       "consul_factory_data_dir: \"%s\"\n"+
       "consul_access_token: \"%s\"\n"+
       "consul_address: \"%s\"\n"+
-      "gitlab_api_token: \"%s\"\n"+
+      "api_token: \"%s\"\n"+
       "service_name: \"%s\"\n",
-      consulTerraformDir, consulToken, consulAddress, gitlabToken, serviceName,
+      consulTerraformDir, consulToken, consulAddress, repoToken, serviceName,
   )
 
   _, err = file.WriteString(content)
@@ -93,61 +94,54 @@ func GenerateTerraformConfig(configPath, serviceName string) error {
   return nil
 }
 
-func RenderTerraform(
-  serviceID,
-  serviceName,
-  repoProvider,
-  repoOwner,
-  runnerID,
-  templatePath,
-  outputPath  string,
-  ServiceTags []string,
-  ) error {
-  serialServiceID := strings.ReplaceAll(serviceID, "-", "_")
+func ImportTerraform() error {
+  dataDir       := config.AppConfig.DataDir
+  repoURL       := config.SFRepoURL
+  cloneDest     := dataDir + "/tmp/sf-repo"
+  terraformPath := filepath.Join(cloneDest, "terraform")
+  importDest    := dataDir + "/terraform"
 
-  // Define custom function map
-  funcMap := template.FuncMap{
-      "sub": func(a, b int) int {
-          return a - b
-      },
+  if _, err := os.Stat(importDest); os.IsNotExist(err) {
+      l.Info("Terraform repository not present at: %s. Importing..", importDest)
+      if err := exec.Command("git", "clone", repoURL, cloneDest).Run(); err != nil {
+          return fmt.Errorf("Failed to clone Terraform directory: %v", err)
+      }
+      defer os.RemoveAll(cloneDest)
+      if err := exec.Command("cp", "-r", terraformPath, importDest).Run(); err != nil {
+          return fmt.Errorf("Failed to copy Terraform %s directory to Data directory %s: %v", terraformPath, importDest, err)
+      }
   }
+  l.Info("Terraform repository present at: %s", importDest)
 
-  dataDir := filepath.Join(config.RootDir, config.AppConfig.DataDir)
-  data := TemplateData{
-      SFHost:             config.AppConfig.Server.ServerAddress,
-      SFPort:             config.AppConfig.Server.ServerPort,
-      DataDir:            dataDir,
-      ServiceID:          serviceID,
-      SerialServiceID:    serialServiceID,
-      ServiceName:        serviceName,
-      ServiceTags:        ServiceTags,
-      RepoProvider:       repoProvider,
-      RepoOwner:          repoOwner,
-      RunnerID:           runnerID,
-      ConsulServiceData:  config.ConsulServicesDataDir,
-  }
 
-  // Render the template
-  err := RenderTemplate(templatePath, outputPath, data, funcMap)
-    if err != nil {
-      return fmt.Errorf("Failed to render template %s: %v", templatePath, err)
-  }
-
-  // Delete the source template
-  return os.Remove(templatePath)
+  return nil
 }
 
-func RenderTemplate(templatePath, outputPath string, data TemplateData, funcMap template.FuncMap) error {
-    tmpl, err := template.New(filepath.Base(templatePath)).Funcs(funcMap).ParseFiles(templatePath)
-    if err != nil {
-        return fmt.Errorf("Failed to parse template files: %v", err)
+func GetRepoVars(repo service.Repository) map[string]string {
+    repoVars := make(map[string]string)
+
+    // Check if GitLab configuration is provided
+    if repo.Provider == "gitlab" {
+        gitlab := repo.RepoConfig
+        repoVars["provider"] = "gitlab"
+
+        if gitlab.NamespaceID != nil {
+            repoVars["namespace_id"] = *gitlab.NamespaceID
+        }
+        if gitlab.RunnerID != nil {
+            repoVars["runner_id"] = *gitlab.RunnerID
+        }
+        repoVars["registry_token"] = gitlab.RegistryToken
+        repoVars["repository_owner"] = gitlab.RepositoryOwner
     }
 
-    outputFile, err := os.Create(outputPath)
-    if err != nil {
-        return fmt.Errorf("Failed to create destination files", err)
+    // Check if GitHub configuration is provided
+    if repo.Provider == "github" {
+        github := repo.RepoConfig
+        repoVars["provider"] = "github"
+        repoVars["registry_token"] = github.RegistryToken
+        repoVars["repository_owner"] = github.RepositoryOwner
     }
-    defer outputFile.Close()
 
-    return tmpl.Execute(outputFile, data)
+    return repoVars
 }

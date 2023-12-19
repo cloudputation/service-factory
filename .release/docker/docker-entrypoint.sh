@@ -1,4 +1,4 @@
-#!/usr/bin/dumb-init /bin/bash
+#!/usr/bin/dumb-init /bin/sh
 # Copyright (c) Cloudputation, Inc.
 
 set -e

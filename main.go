@@ -19,7 +19,7 @@ func main() {
       l.Fatal("Failed to initialize metrics service: %v", err)
   }
 
-	err = l.InitLogger(config.AppConfig.LogDir)
+	err = l.InitLogger(config.RootDir + "/" + config.AppConfig.LogDir)
   if err != nil {
       l.Fatal("Error initializing logs: %v", err)
   }

@@ -33,22 +33,22 @@ func DownloadRepoToDatastore(repoDatastore, repoDatastoreParent, templateURL, te
   return nil
 }
 
-func GitClone(repoProvider string, template string, cookieCutterDestination string) error {
-	cookieCutterGitUrl := fmt.Sprintf("https://%s/%s.git", repoProvider, template)
+func GitClone(repoProvider, template, cloneDestination string) error {
+	cloneSource := fmt.Sprintf("https://%s/%s.git", repoProvider, template)
 
-	fmt.Println("Cloning from", cookieCutterGitUrl)
+	fmt.Println("Cloning from", cloneSource)
 
-	cmd := exec.Command("git", "clone", cookieCutterGitUrl, cookieCutterDestination)
+	cmd := exec.Command("git", "clone", cloneSource, cloneDestination)
   err := cmd.Run()
 	if err != nil {
-		return fmt.Errorf("Failed to clone cookie cutter %s: %v", cookieCutterGitUrl, err)
+		return fmt.Errorf("Failed to clone cookie cutter %s: %v", cloneSource, err)
 	}
 
-  gitDirectory := filepath.Join(cookieCutterDestination, ".git")
+  gitDirectory := filepath.Join(cloneDestination, ".git")
   cmd = exec.Command("rm", "-fr", gitDirectory)
   err = cmd.Run()
 	if err != nil {
-		return fmt.Errorf("Failed to delete .git directory in %s: %v", cookieCutterDestination, err)
+		return fmt.Errorf("Failed to delete .git directory in %s: %v", cloneDestination, err)
 	}
 
 

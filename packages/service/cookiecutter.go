@@ -26,7 +26,7 @@ type Service struct {
   Port	string		`hcl:"port"`
   Tags	[]string	`hcl:"tags"`
   Template  			`hcl:"template,block"`
-  Repo      			`hcl:"repo,block"`
+  Repository   		`hcl:"repository,block"`
   Network      		`hcl:"network,block"`
 }
 
@@ -35,18 +35,23 @@ type Template struct {
 	TemplateName string `hcl:"template"`
 }
 
-type Repo struct {
-	Provider     		string `hcl:"provider"`
-	NamespaceID     string `hcl:"namespace_id"`
-	RunnerID        string `hcl:"runner_id"`
+type Repository struct {
+	Provider	string	`hcl:"provider"`
+	RepoConfig 				`hcl:"config,block"`
+}
+
+type RepoConfig struct {
+	NamespaceID     *string `hcl:"namespace_id"`
+	RunnerID        *string `hcl:"runner_id"`
 	RegistryToken   string `hcl:"registry_token"`
 	RepositoryOwner string `hcl:"repository_owner"`
 }
 
 type Network struct {
 	AuthoritativeServer	string `hcl:"authoritative_server"`
-	ClientHostname			string `hcl:"client_hostname"`
+	TargetHost          string `hcl:"target_host"`
 }
+
 
 
 func GetCookieCutterFiles(templateDir string) (map[string]string, error) {
@@ -119,13 +124,13 @@ func RenderTemplate(templateFilename, outputFilename string, svc ServiceSpecs) e
 
   err = os.Remove(templateFilename)
   if err != nil {
-    return fmt.Errorf("Failed to remove template source file %s: %v", templateFilename, err)
+    	return fmt.Errorf("Failed to remove template source file %s: %v", templateFilename, err)
   }
 
   gitDir := filepath.Join(config.AppConfig.DataDir, "/services/", svc.Service.Name, ".git")
   err = os.RemoveAll(gitDir)
 	if err != nil {
-		return fmt.Errorf("Failed to remove .git directory in %s: %v", gitDir, err)
+			return fmt.Errorf("Failed to remove .git directory in %s: %v", gitDir, err)
 	}
 
   return nil

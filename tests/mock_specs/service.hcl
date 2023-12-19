@@ -6,19 +6,21 @@ service {
 
   template {
     template_url  = "gitlab.com"
-    template      = "franksrobins/cookie-cutter-api"
+    template      = "cloudputation/cookie-cutter-api"
   }
 
-  repo {
-    provider          = "gitlab"
-    namespace_id      = "69638879"
-    runner_id         = "20665767"
-    registry_token    = "glpat-kuuxn3oXxwBsCMkxssDY"
-    repository_owner  = "franksrobins"
+  repository {
+    provider  = "gitlab"
+    config {
+      namespace_id      = "69638879"
+      runner_id         = "20665767"
+      registry_token    = "glpat-kuuxn3oXxwBsCMkxssDY"
+      repository_owner  = "franksrobins"
+    }
   }
 
   network {
     authoritative_server  = "10.100.200.241"
-    client_hostname       = "comm1"
+    target_host           = "comm1"
   }
 }

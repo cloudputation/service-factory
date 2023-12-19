@@ -1,92 +1,199 @@
 # Service Factory
-
-
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.com/fishstock-network/service-manager.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.com/fishstock-network/service-manager/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
+Repository infrastructure as code
 
 ## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+Service Factory facilitates the onboarding of new services in your organization by automating the redundancies in setting up a new repository.
+It employs a Pull-Render-Push (Connect) methods that allows teams to describe and deploy new services in their organization by automating their repositories creation. Allowing the dev team to start coding faster. By leveraging infrastructure as code, Service Factory reduces the time to market of a new service at the organization level while promoting standardization withing your service repositories and a GitOps development workflow.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+### Repository provider support
+For now, only Github and Gitlab are supported.
 
 ## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+```bash
+wget https://github.com/cloudputation/service-factory/releases/download/v0.0.78/service-factory -O ./factory
+chmod +x ./factory
+mv ./factory /usr/bin/
+echo "alias factory=/usr/bin/service-factory" >> ~/.bashrc
+. ~/.bashrc
+```
+
+## Configuration
+By default, Service Factory looks for `/etc/service-factory/config.hcl`
+
+Here is an example server config file
+```hcl
+log_dir = "path/to/log"
+data_dir = "path/to/sf-data"
+
+server {
+  port    = "4884"
+  address = "127.0.01" // server address for cli to lookup
+}
+
+consul {
+  consul_host   = "127.0.0.1"
+  consul_token  = CONSUL_TOKEN
+}
+
+repository {
+  gitlab {
+    access_token = GITLAB_TOKEN
+  }
+  github {
+    access_token = GITHUB_TOKEN
+  }
+}
+
+```
 
 ## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### Run service
+```bash
+factory agent
+```
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+### Apply new services
+From another terminal
+```bash
+factory apply --service-file path/to/service1.hcl --service-file path/to/serviceN.hcl
+```
+### Destroy new services
+```bash
+factory destroy --service service_name --service service_name
+```
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+### Example service specs files
+```hcl
+service {
+  name    = "test-service1"
+  group   = "test-apis"
+  port    = "9900"
+  tags    = ["SF-Managed"]
+
+  template {
+    template_url  = "github.com"
+    template      = "cloudputation/cookie-cutter-api"
+  }
+
+  repository {
+    provider  = "github"
+    config {
+      registry_token    = GITLAB_REGISTRY_TOKEN
+      repository_owner  = "cloudputation"
+    }
+  }
+
+  // Cookie Cutter rendering variables only
+  // Those variables are only used when rendering .ck files
+  network {
+    authoritative_server  = "127.0.0.1" // Typically a nomad server
+    target_host           = "backend1"  // Typically a nomad client
+  }
+}
+```
+
+## Cookie Cutters
+Service Factory allows for cookie cutter repository creation using the go-template engine. Every value in a service spec file can be used in a templates. Example of a cookie cutter file intended to render a Dockerfile with the service's port by using `{{.Service.Port}}`
+```go
+FROM ubuntu:22.04
+
+WORKDIR /app
+
+
+RUN apt update
+RUN apt -y upgrade
+RUN apt -y install python3 python3-pip
+
+COPY ./requirements.txt /app/requirements.txt
+COPY ./API_VERSION /app/API_VERSION
+COPY ./service.py /app/service.py
+
+
+RUN python3 -m pip install --no-cache-dir --upgrade -r /app/requirements.txt
+
+
+CMD ["uvicorn", "service:app", "--host", "0.0.0.0", "--port", "{{.Service.Port}}"]
+
+```
+## Example Cookie Cutters
+2 example cookie cutters are provided but you may use or create any desired repository template.
+
+### Example Cookie Cutters
+`github.com/cloudputation/cookie-cutter-api`
+`gitlab.com/cloudputation/cookie-cutter-api`
+For now, only those are available but more are to come in a further release.
+
+## Internal Terraform
+Service Factory uses Terragrunt to execute Terraform code under the hood as part of its main components.
+
+## Consul Backend
+For now only Consul is supported as Terraform backend
+
+## Repository as a service
+Service Factory registers created repositories to consul with an health check that confirms its existence. It will use the configured (/etc/service-factory/config.hcl) github or gitlab token to ping a private repository.
+
+## Application Metrics
+Basic prometheus format metrics can be collected at http://sf_address:4884/v1/system/metrics
+
+`agent_errors`
+`health_endpoint_hits`
+`apply_endpoint_hits`
+`destroy_endpoint_hits`
+`repo_status_endpoint_hits`
+`service_status_endpoint_hits`
+`system_status_endpoint_hits`
+`system_metrics_endpoint_hits`
+
+Other metrics are general go specific metrics.
+
+## Server API
+Although it is possible to use the CLI to deploy or decommission service repositories, Service Factory's endpoints can be used directly
+
+Deploy service repository
+```bash
+curl -X POST -data@service.json http://127.0.0.1:4884/service/apply
+```
+service.json
+```json
+{
+  "service": {
+    "name": "test-service1",
+    "group": "test-apis",
+    "port": "9900",
+    "tags": ["SF-Managed"],
+    "template": {
+      "template_url": "github.com",
+      "template": "cloudputation/cookie-cutter-api"
+    },
+    "repository": {
+      "provider": "github",
+      "config": {
+        "registry_token": "GITLAB_REGISTRY_TOKEN",
+        "repository_owner": "cloudputation"
+      }
+    },
+    "network": {
+      "authoritative_server": "127.0.0.1",
+      "target_host": "backend1"
+    }
+  }
+}
+```
+
+Decommission service repository
+```bash
+curl -X POST -data@service.json http://127.0.0.1:4884/service/destroy
+```
+service.json
+```json
+{
+  "service-names": ["service1", "service2", "service3"]
+}
+```
 
 ## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+Feel free to create an issue or propose a pull request.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Follow the [Code of Conduct](CODE_OF_CONDUCT.md).

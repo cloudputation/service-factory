@@ -107,10 +107,20 @@ func ProcessDeletion(serviceName string, destroyedServices *[]string, mutex *syn
       return fmt.Errorf("Failed to fetch service manifest: %v", err)
   }
 
-  var serviceID, _ = consulServiceData["service-id"].(string)
+  var serviceID, _ = consulServiceData["service_id"].(string)
   terraformServiceDir := filepath.Join(dataDir, "services", serviceName, "terraform")
+  repoVars := make(map[string]string)
+  for key, value := range consulServiceData {
+      if key != "repository_id" && key != "repository_provider" {
+          strValue, ok := value.(string)
+          if ok {
+              repoVars[key] = strValue
+          }
+      }
+  }
+
   terraformCmd := "destroy"
-  if err := terraform.RunTerraform(terraformServiceDir, terraformCmd, serviceID, serviceName); err != nil {
+  if err := terraform.RunTerraform(terraformServiceDir, terraformCmd, serviceID, serviceName, repoVars); err != nil {
       return fmt.Errorf("Failed to run terraform: %v", err)
   }
 

@@ -1,4 +1,4 @@
-log_dir = "sf.log"
+log_dir = "log"
 data_dir = "sf-data"
 
 server {
@@ -11,12 +11,11 @@ consul {
   consul_token  = "pLggHasySyfQhkTBWuX30jJ2eM0UJ3Rs6rK8cFNTt/o="
 }
 
-terraform {
-  terraform_dir = "terraform"
-}
-
-repo {
+repository {
   gitlab {
     access_token = "glpat-HuEekH9zXTi8DbWkyLzo"
+  }
+  github {
+    access_token = "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"
   }
 }
