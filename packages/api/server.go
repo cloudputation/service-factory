@@ -1,14 +1,14 @@
 package api
 
 import (
-  "fmt"
-  "net/http"
+    "fmt"
+    "net/http"
 
-  "github.com/prometheus/client_golang/prometheus/promhttp"
+    "github.com/prometheus/client_golang/prometheus/promhttp"
 
-  "github.com/cloudputation/service-factory/packages/config"
-  l "github.com/cloudputation/service-factory/packages/logger"
-  "github.com/cloudputation/service-factory/packages/api/v1"
+    "github.com/cloudputation/service-factory/packages/config"
+    l "github.com/cloudputation/service-factory/packages/logger"
+    "github.com/cloudputation/service-factory/packages/api/v1"
 )
 
 
@@ -20,7 +20,7 @@ func StartServer() {
 
   http.HandleFunc("/v1/health", v1.HealthHandler)
   http.HandleFunc("/v1/service/apply", v1.ApplyHandlerWrapper)
-	http.HandleFunc("/v1/service/destroy", v1.DestroyHandlerWrapper)
+  http.HandleFunc("/v1/service/destroy", v1.DestroyHandlerWrapper)
   http.HandleFunc("/v1/service/status", v1.ServiceStatusHandlerWrapper)
   http.HandleFunc("/v1/repo/status", v1.RepoStatusHandlerWrapper)
   http.HandleFunc("/v1/system/status", v1.SystemStatusHandlerWrapper)

@@ -25,7 +25,7 @@ type Service struct {
   Group	string		`hcl:"group"`
   Port	string		`hcl:"port"`
   Tags	[]string	`hcl:"tags"`
-  Template  			`hcl:"template,block"`
+  Template				`hcl:"template,block"`
   Repository   		`hcl:"repository,block"`
   Network      		`hcl:"network,block"`
 }
@@ -37,19 +37,19 @@ type Template struct {
 
 type Repository struct {
 	Provider	string	`hcl:"provider"`
-	RepoConfig 				`hcl:"config,block"`
+	RepoConfig				`hcl:"config,block"`
 }
 
 type RepoConfig struct {
-	NamespaceID     *string `hcl:"namespace_id"`
-	RunnerID        *string `hcl:"runner_id"`
-	RegistryToken   string `hcl:"registry_token"`
-	RepositoryOwner string `hcl:"repository_owner"`
+	NamespaceID     *string	`hcl:"namespace_id"`
+	RunnerID        *string	`hcl:"runner_id"`
+	RegistryToken   string	`hcl:"registry_token"`
+	RepositoryOwner string	`hcl:"repository_owner"`
 }
 
 type Network struct {
-	AuthoritativeServer	string `hcl:"authoritative_server"`
-	TargetHost          string `hcl:"target_host"`
+	AuthoritativeServer	string	`hcl:"authoritative_server"`
+	TargetHost					string	`hcl:"target_host"`
 }
 
 
@@ -59,15 +59,15 @@ func GetCookieCutterFiles(templateDir string) (map[string]string, error) {
 
 	err := filepath.Walk(templateDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			return fmt.Errorf("Failed to analyze template directory %s: %v", templateDir, err)
+				return fmt.Errorf("Failed to analyze template directory %s: %v", templateDir, err)
 		}
 
 		if !info.IsDir() && strings.HasSuffix(info.Name(), ".ck") {
-			relPath, _ := filepath.Rel(templateDir, path)
-			key := filepath.Join(templateDir, relPath)
-			value := filepath.Join(templateDir, strings.TrimSuffix(relPath, ".ck"))
-			cookieCutterFiles[key] = value
-			l.Info("Template file: %s, Rendered file: %s\n", key, value)
+				relPath, _ := filepath.Rel(templateDir, path)
+				key := filepath.Join(templateDir, relPath)
+				value := filepath.Join(templateDir, strings.TrimSuffix(relPath, ".ck"))
+				cookieCutterFiles[key] = value
+				l.Info("Template file: %s, Rendered file: %s\n", key, value)
 		}
 
 
@@ -75,7 +75,7 @@ func GetCookieCutterFiles(templateDir string) (map[string]string, error) {
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("Could not render repository template files: %v", err)
+			return nil, fmt.Errorf("Could not render repository template files: %v", err)
 	}
 
 

@@ -2,8 +2,8 @@ package stats
 
 import (
     "fmt"
-  	"io/ioutil"
-  	"encoding/json"
+    "io/ioutil"
+    "encoding/json"
 
     "go.opentelemetry.io/otel/exporters/prometheus"
     api "go.opentelemetry.io/otel/metric"
@@ -15,8 +15,8 @@ import (
 
 
 type FactoryInfo struct {
-	FactoryState string   `json:"factory-state"`
-	Services     []string `json:"services"`
+  FactoryState  string   `json:"factory-state"`
+  Services     []string `json:"services"`
 }
 
 const meterName = "SF.Metrics"
@@ -112,13 +112,13 @@ func GenerateState() error {
   dirName := config.RootDir + "/" + config.AppConfig.DataDir + "/services"
   jsonData, err := GetFactoryInfo(dirName)
 	if err != nil {
-		return fmt.Errorf("Failed to get factory info: %v", err)
+      return fmt.Errorf("Failed to get factory info: %v", err)
 	}
 
 	keyPath := config.ConsulServiceSummaryDataDir
 	err = consul.ConsulStorePut(jsonData, keyPath)
 	if err != nil {
-		return fmt.Errorf("Failed to put data in Consul KV: %v", err)
+      return fmt.Errorf("Failed to put data in Consul KV: %v", err)
 	}
 
 
@@ -128,14 +128,14 @@ func GenerateState() error {
 func GetFactoryInfo(dirPath string) (string, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
-		return "", fmt.Errorf("Failed to read factory files in %s: %v", dirPath, err)
+      return "", fmt.Errorf("Failed to read factory files in %s: %v", dirPath, err)
 	}
 
 	var dirNames []string
 	for _, file := range files {
-		if file.IsDir() {
-			dirNames = append(dirNames, file.Name())
-		}
+      if file.IsDir() {
+          dirNames = append(dirNames, file.Name())
+      }
 	}
 
 	factoryInfo := FactoryInfo{
@@ -145,7 +145,7 @@ func GetFactoryInfo(dirPath string) (string, error) {
 
 	jsonData, err := json.MarshalIndent(factoryInfo, "", "  ")
 	if err != nil {
-		return "", fmt.Errorf("Failed to process factory info: %v", err)
+      return "", fmt.Errorf("Failed to process factory info: %v", err)
 	}
 
 

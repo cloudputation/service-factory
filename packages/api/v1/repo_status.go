@@ -7,7 +7,7 @@ import (
 
     "github.com/cloudputation/service-factory/packages/config"
     l "github.com/cloudputation/service-factory/packages/logger"
-  	"github.com/cloudputation/service-factory/packages/stats"
+    "github.com/cloudputation/service-factory/packages/stats"
 )
 
 

@@ -1,14 +1,14 @@
 package v1
 
 import (
-  "fmt"
-  "net/http"
-  "encoding/json"
+    "fmt"
+    "net/http"
+    "encoding/json"
 
-  "github.com/cloudputation/service-factory/packages/config"
-  "github.com/cloudputation/service-factory/packages/consul"
-	"github.com/cloudputation/service-factory/packages/stats"
-  l "github.com/cloudputation/service-factory/packages/logger"
+    "github.com/cloudputation/service-factory/packages/config"
+    "github.com/cloudputation/service-factory/packages/consul"
+    "github.com/cloudputation/service-factory/packages/stats"
+    l "github.com/cloudputation/service-factory/packages/logger"
 )
 
 

@@ -6,8 +6,8 @@ import (
     "io/ioutil"
     "net/http"
 
-  	"github.com/hashicorp/hcl/v2/gohcl"
-  	"github.com/hashicorp/hcl/v2/hclparse"
+    "github.com/hashicorp/hcl/v2/gohcl"
+    "github.com/hashicorp/hcl/v2/hclparse"
 
     "github.com/cloudputation/service-factory/packages/config"
     l "github.com/cloudputation/service-factory/packages/logger"
@@ -64,45 +64,45 @@ func GetServiceStatus(serviceName string) error {
 }
 
 func CheckConfig() error {
-		err := config.LoadConfiguration()
-		if err != nil {
-				return fmt.Errorf("Failed to load configuration: %v", err)
-		}
+  err := config.LoadConfiguration()
+  if err != nil {
+    return fmt.Errorf("Failed to load configuration: %v", err)
+  }
 
-		hclPath := config.GetConfigPath()
-		jsonOutput, err := AppHCLtoJSON(hclPath)
-		if err != nil {
-				return fmt.Errorf("Error during conversion: %v", err)
-		}
+  hclPath := config.GetConfigPath()
+  jsonOutput, err := AppHCLtoJSON(hclPath)
+  if err != nil {
+    return fmt.Errorf("Error during conversion: %v", err)
+  }
 
-		fmt.Println(jsonOutput)
+  fmt.Println(jsonOutput)
 
 
-		return nil
+  return nil
 }
 
 func AppHCLtoJSON(HCLFilePath string) (string, error) {
-    hclContent, err := ioutil.ReadFile(HCLFilePath)
-    if err != nil {
-        return "", fmt.Errorf("Failed to read HCL file: %v", err)
-    }
+  hclContent, err := ioutil.ReadFile(HCLFilePath)
+  if err != nil {
+      return "", fmt.Errorf("Failed to read HCL file: %v", err)
+  }
 
-    parser := hclparse.NewParser()
-    file, diags := parser.ParseHCL(hclContent, HCLFilePath)
-    if diags.HasErrors() {
-        return "", fmt.Errorf("Failed to parse HCL: %s", diags.Error())
-    }
+  parser := hclparse.NewParser()
+  file, diags := parser.ParseHCL(hclContent, HCLFilePath)
+  if diags.HasErrors() {
+      return "", fmt.Errorf("Failed to parse HCL: %s", diags.Error())
+  }
 
-    diags = gohcl.DecodeBody(file.Body, nil, &config.AppConfig)
-    if diags.HasErrors() {
-        return "", fmt.Errorf("Failed to decode HCL: %s", diags.Error())
-    }
+  diags = gohcl.DecodeBody(file.Body, nil, &config.AppConfig)
+  if diags.HasErrors() {
+      return "", fmt.Errorf("Failed to decode HCL: %s", diags.Error())
+  }
 
-    jsonOutput, err := json.MarshalIndent(config.AppConfig, "", "  ")
-    if err != nil {
-        return "", fmt.Errorf("Failed to marshal to JSON: %v", err)
-    }
+  jsonOutput, err := json.MarshalIndent(config.AppConfig, "", "  ")
+  if err != nil {
+      return "", fmt.Errorf("Failed to marshal to JSON: %v", err)
+  }
 
 
-    return string(jsonOutput), nil
+  return string(jsonOutput), nil
 }

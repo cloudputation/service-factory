@@ -16,8 +16,8 @@ import (
 )
 
 type DestroyResponseBody struct {
-    Message          string   `json:"message"`
-    DestroyedServices  []string `json:"destroyedServices"`
+    Message           string   `json:"message"`
+    DestroyedServices []string `json:"destroyedServices"`
 }
 
 type DestroyRequestBody struct {

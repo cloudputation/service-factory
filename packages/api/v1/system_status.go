@@ -1,14 +1,14 @@
 package v1
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
+		"encoding/json"
+		"fmt"
+		"net/http"
 
-	"github.com/cloudputation/service-factory/packages/config"
-	"github.com/cloudputation/service-factory/packages/consul"
-	"github.com/cloudputation/service-factory/packages/stats"
-	l "github.com/cloudputation/service-factory/packages/logger"
+		"github.com/cloudputation/service-factory/packages/config"
+		"github.com/cloudputation/service-factory/packages/consul"
+		"github.com/cloudputation/service-factory/packages/stats"
+		l "github.com/cloudputation/service-factory/packages/logger"
 )
 
 type FactoryStatus struct {
@@ -39,7 +39,7 @@ func SystemStatusHandler(w http.ResponseWriter, r *http.Request) {
 	consulFactoryStatus, err := consul.ConsulStoreGet(statusPath)
 	if err != nil {
 			l.Error("Failed to fetch factory state: "+err.Error(), http.StatusInternalServerError)
-      stats.ErrorCounter.Add(r.Context(), 1)
+			stats.ErrorCounter.Add(r.Context(), 1)
 			http.Error(w, "Failed to fetch factory state: "+err.Error(), http.StatusInternalServerError)
 			return
 	}
@@ -47,7 +47,7 @@ func SystemStatusHandler(w http.ResponseWriter, r *http.Request) {
 	consulFactoryStatusBytes, err := json.Marshal(consulFactoryStatus)
 	if err != nil {
 			l.Error("Error marshaling map to JSON: %v", err)
-      stats.ErrorCounter.Add(r.Context(), 1)
+			stats.ErrorCounter.Add(r.Context(), 1)
 			http.Error(w, "Failed to marshal map to JSON", http.StatusInternalServerError)
 			return
 	}
@@ -56,7 +56,7 @@ func SystemStatusHandler(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(consulFactoryStatusBytes, &status)
 	if err != nil {
 			l.Error("Error unmarshaling JSON: %v", err)
-      stats.ErrorCounter.Add(r.Context(), 1)
+			stats.ErrorCounter.Add(r.Context(), 1)
 			http.Error(w, "Failed to unmarshal JSON", http.StatusInternalServerError)
 			return
 	}

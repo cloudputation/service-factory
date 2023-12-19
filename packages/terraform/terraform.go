@@ -118,30 +118,30 @@ func ImportTerraform() error {
 }
 
 func GetRepoVars(repo service.Repository) map[string]string {
-    repoVars := make(map[string]string)
+  repoVars := make(map[string]string)
 
-    // Check if GitLab configuration is provided
-    if repo.Provider == "gitlab" {
-        gitlab := repo.RepoConfig
-        repoVars["provider"] = "gitlab"
+  // Check if GitLab configuration is provided
+  if repo.Provider == "gitlab" {
+      gitlab := repo.RepoConfig
+      repoVars["provider"] = "gitlab"
 
-        if gitlab.NamespaceID != nil {
-            repoVars["namespace_id"] = *gitlab.NamespaceID
-        }
-        if gitlab.RunnerID != nil {
-            repoVars["runner_id"] = *gitlab.RunnerID
-        }
-        repoVars["registry_token"] = gitlab.RegistryToken
-        repoVars["repository_owner"] = gitlab.RepositoryOwner
-    }
+      if gitlab.NamespaceID != nil {
+          repoVars["namespace_id"] = *gitlab.NamespaceID
+      }
+      if gitlab.RunnerID != nil {
+          repoVars["runner_id"] = *gitlab.RunnerID
+      }
+      repoVars["registry_token"] = gitlab.RegistryToken
+      repoVars["repository_owner"] = gitlab.RepositoryOwner
+  }
 
-    // Check if GitHub configuration is provided
-    if repo.Provider == "github" {
-        github := repo.RepoConfig
-        repoVars["provider"] = "github"
-        repoVars["registry_token"] = github.RegistryToken
-        repoVars["repository_owner"] = github.RepositoryOwner
-    }
+  // Check if GitHub configuration is provided
+  if repo.Provider == "github" {
+      github := repo.RepoConfig
+      repoVars["provider"] = "github"
+      repoVars["registry_token"] = github.RegistryToken
+      repoVars["repository_owner"] = github.RepositoryOwner
+  }
 
-    return repoVars
+  return repoVars
 }

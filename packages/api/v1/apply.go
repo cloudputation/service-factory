@@ -217,12 +217,12 @@ func ProcessServiceSpec(specs service.ServiceSpecs, appliedServices *[]string, m
           repoAddress := fmt.Sprintf("https://%s.com/%s/%s", repoProvider, repoOwner, serviceName)
           httpCheck := fmt.Sprintf("http://"+
           		"%s:%s/v1/repo/status?repoProvider=%s&repoID=%s&repoOwner=%s&serviceName=%s",
-          		SFHost,
-          		SFPort,
+              SFHost,
+              SFPort,
               repoProvider,
-          		repoID,
-          		repoOwner,
-          		serviceName,
+              repoID,
+              repoOwner,
+              serviceName,
         	)
 
           err = consul.RegisterRepo(serviceID, serviceName, repoAddress, httpCheck, serviceTags)

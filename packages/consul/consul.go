@@ -6,7 +6,7 @@ import (
 
 		"github.com/hashicorp/consul/api"
 		"github.com/cloudputation/service-factory/packages/config"
-	  l "github.com/cloudputation/service-factory/packages/logger"
+		l "github.com/cloudputation/service-factory/packages/logger"
 )
 
 
@@ -21,7 +21,7 @@ var statusDir = config.ConsulFactoryDataDir + "/status"
 
 func InitConsul() error {
 	consulConfig := api.DefaultConfig()
-  consulHost := config.AppConfig.Consul.ConsulHost
+	consulHost := config.AppConfig.Consul.ConsulHost
 	consulPort := ":8500"
 	consulConfig.Address = consulHost + consulPort
 
@@ -42,7 +42,7 @@ func BootstrapConsul() error {
 	l.Info("Checking if data store is initialized.")
 	pair, _, err := kv.Get(statusDir, nil)
 	if err != nil {
-			return fmt.Errorf("Failed to initiate Consul connection: %v", err)
+		return fmt.Errorf("Failed to initiate Consul connection: %v", err)
 	}
 
 	if pair == nil {
@@ -52,14 +52,14 @@ func BootstrapConsul() error {
 
 		statusJSON, err := json.Marshal(status)
 		if err != nil {
-				return fmt.Errorf("Failed to marshal JSON: %v", err)
+			return fmt.Errorf("Failed to marshal JSON: %v", err)
 		}
 
 		writeOptions := &api.WriteOptions{}
 		p := &api.KVPair{Key: statusDir, Value: statusJSON}
 		_, err = kv.Put(p, writeOptions)
 		if err != nil {
-				return fmt.Errorf("Failed to initialize data store on Consul: %v", err)
+			return fmt.Errorf("Failed to initialize data store on Consul: %v", err)
 		}
 		l.Info("Data store initialized successfully.")
 	} else {
@@ -70,21 +70,21 @@ func BootstrapConsul() error {
 	return nil
 }
 
-func ConsulStoreGet(key string) (map[string]interface{}, error) {
-  kv := ConsulClient.KV()
+	func ConsulStoreGet(key string) (map[string]interface{}, error) {
+	kv := ConsulClient.KV()
 
-  kvPair, _, err := kv.Get(key, nil)
+	kvPair, _, err := kv.Get(key, nil)
 	if err != nil {
-			return nil, fmt.Errorf("Failed to query key on Consul: %v", err)
+		return nil, fmt.Errorf("Failed to query key on Consul: %v", err)
 	}
 	if kvPair == nil {
-			return nil, fmt.Errorf("Key not found: %s", key)
+		return nil, fmt.Errorf("Key not found: %s", key)
 	}
 
 	var jsonData map[string]interface{}
 	err = json.Unmarshal(kvPair.Value, &jsonData)
 	if err != nil {
-			return nil, fmt.Errorf("Failed to parse Consul key %s: %v", key, err)
+		return nil, fmt.Errorf("Failed to parse Consul key %s: %v", key, err)
 	}
 
 
@@ -106,7 +106,7 @@ func ConsulStorePut(jsonData, keyPath string) error {
 }
 
 func ConsulStoreDelete(keyPath string) error {
-  kv := ConsulClient.KV()
+	kv := ConsulClient.KV()
 
 	_, err := kv.Delete(keyPath, nil)
 	if err != nil {
@@ -119,19 +119,19 @@ func ConsulStoreDelete(keyPath string) error {
 
 func RegisterRepo(serviceID, serviceName, repoAddress, httpCheck string, serviceTags []string) error {
 	serviceRegistration := &api.AgentServiceRegistration{
-	    ID:      serviceID,
-	    Name:    "service-repository",
-	    Tags:    serviceTags,
-	    Address: repoAddress,
-	    Meta: map[string]string{
-	        "resident-service": serviceName,
-	    },
-	    Check: &api.AgentServiceCheck{
+			ID:      serviceID,
+			Name:    "service-repository",
+			Tags:    serviceTags,
+			Address: repoAddress,
+			Meta: map[string]string{
+					"resident-service": serviceName,
+			},
+			Check: &api.AgentServiceCheck{
 					Name:			"Service Repository Alive",
-	        HTTP:     httpCheck,
-	        Interval: "5m",
-	        Timeout:  "10s",
-	    },
+					HTTP:     httpCheck,
+					Interval: "5m",
+					Timeout:  "10s",
+			},
 	}
 
   client := ConsulClient
