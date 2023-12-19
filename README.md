@@ -119,9 +119,8 @@ CMD ["uvicorn", "service:app", "--host", "0.0.0.0", "--port", "{{.Service.Port}}
 ## Example Cookie Cutters
 2 example cookie cutters are provided but you may use or create any desired repository template.
 
-### Example Cookie Cutters
-`github.com/cloudputation/cookie-cutter-api`
-`gitlab.com/cloudputation/cookie-cutter-api`
+`github.com/cloudputation/cookie-cutter-api`<br>
+`gitlab.com/cloudputation/cookie-cutter-api`<br>
 For now, only those are available but more are to come in a further release.
 
 ## Internal Terraform
@@ -136,14 +135,14 @@ Service Factory registers created repositories to consul with an health check th
 ## Application Metrics
 Basic prometheus format metrics can be collected at http://sf_address:4884/v1/system/metrics
 
-`agent_errors`
-`health_endpoint_hits`
-`apply_endpoint_hits`
-`destroy_endpoint_hits`
-`repo_status_endpoint_hits`
-`service_status_endpoint_hits`
-`system_status_endpoint_hits`
-`system_metrics_endpoint_hits`
+`agent_errors`<br>
+`health_endpoint_hits`<br>
+`apply_endpoint_hits`<br>
+`destroy_endpoint_hits`<br>
+`repo_status_endpoint_hits`<br>
+`service_status_endpoint_hits`<br>
+`system_status_endpoint_hits`<br>
+`system_metrics_endpoint_hits`<br>
 
 Other metrics are general go specific metrics.
 
