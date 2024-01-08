@@ -34,7 +34,7 @@ COPY ./API_VERSION ./API_VERSION
 COPY ./artifacts/terraform ${TERRAFORM_PATH}
 COPY ./artifacts/terragrunt ${TERRAGRUNT_PATH}
 COPY ./build/service-factory /bin/service-factory
-COPY ./.release/defaults/config.hcl /sf/config/config.hcl
+COPY ./.release/defaults/example.config.hcl /sf/config/config.hcl
 COPY .release/docker/docker-entrypoint.sh /bin/docker-entrypoint.sh
 
 # Set permissions
@@ -43,8 +43,8 @@ RUN chown -R ${SERVICE_USERNAME}:${SERVICE_USERNAME} ${ROOTDIR} \
     && chmod +x ${TERRAFORM_PATH} \
     && chmod +x ${TERRAGRUNT_PATH}
 
-# Expose port 48840
-EXPOSE 48840
+# Expose port 8840
+EXPOSE 8840
 
 # Set user
 USER ${SERVICE_USERNAME}

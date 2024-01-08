@@ -14,13 +14,13 @@ consul {
   consul_token  = CONSUL_TOKEN
 }
 
-terraform {
-  terraform_dir = "terraform"
-}
-
 repo {
   gitlab {
     // Your Gitlab PAT
     access_token = GITLAB_TOKEN
+  }
+  github {
+    // Your Github PAT
+    access_token = GITHUB_TOKEN
   }
 }
