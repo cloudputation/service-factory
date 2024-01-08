@@ -53,6 +53,7 @@ set-repo-for-github-release:
   needs:
     - job: deploy-service
   script:
+    # Remove ci resources
     - rm -f .release/defaults/config.hcl
     - rm -rf .git
     - rm -rf GIT_CONTROLS/
