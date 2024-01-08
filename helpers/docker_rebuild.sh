@@ -7,7 +7,7 @@ DOCKER_SF_DATA="/sf/sf-data"
 sudo docker stop sf || true
 sudo docker rm sf || true
 mkdir -p ./artifacts
-cp ${HOME}/dev/artifacts/sf_artifacts/* ./artifacts
+cp ${HOME}/dev/artifacts/terraform/* ./artifacts
 
 sudo make docker-build
 

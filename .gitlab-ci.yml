@@ -30,7 +30,7 @@ build-docker-image:
     - job: build-binary
   script:
     - mkdir ./artifacts
-    - cp ${HOME}/working-dir/ci/runners/devel_ci/artifacts/sf_artifacts/* ./artifacts
+    - cp ${HOME}/working-dir/ci/runners/devel_ci/artifacts/terraform/* ./artifacts
     - sudo make docker-build
   artifacts:
     paths:

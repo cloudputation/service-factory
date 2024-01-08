@@ -41,17 +41,6 @@ build: $(SOURCES)
 	@mkdir -p $(BUILD_DIR)
 	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -o $(BUILD_DIR)/$(BINARY_NAME) $(SRC_DIR)
 
-
-# Build the binary as standalone
-build-standalone: $(SOURCES)
-	@echo "Downloading dependencies..."
-	@GO111MODULE=on go mod tidy
-	@GO111MODULE=on go mod download
-	@echo "Building $(BINARY_NAME) for $(GOOS)/$(GOARCH)..."
-	@mkdir -p $(BUILD_DIR)
-	@GO111MODULE=on GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o $(BUILD_DIR)/$(BINARY_NAME)-$(GOOS)-$(GOARCH) $(SRC_DIR)
-
-
 # Build the Docker image
 docker-build: build
 	@echo "Building the Docker image..."
@@ -60,8 +49,8 @@ docker-build: build
 # Push the Docker image to the registry
 docker-push:
 	@echo "Pushing the Docker image..."
-	docker tag $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):$(DOCKER_TAG)
-	docker push $(DOCKER_REGISTRY)/$(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):$(DOCKER_TAG)
+	docker tag $(DOCKER_IMAGE):$(DOCKER_TAG) $(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):$(DOCKER_TAG)
+	docker push $(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):$(DOCKER_TAG)
 
 # Clean up
 clean:
