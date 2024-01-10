@@ -1,5 +1,5 @@
 # Service Factory
-Repository infrastructure as code
+Repository as code
 
 ## Description
 
@@ -11,11 +11,9 @@ For now, only Github and Gitlab are supported.
 
 ## Installation
 ```bash
-wget https://github.com/cloudputation/service-factory/releases/download/v0.0.78/service-factory -O ./factory
+wget https://github.com/cloudputation/service-factory/releases/download/${VERSION}/service-factory -O ./factory
 chmod +x ./factory
-mv ./factory /usr/bin/
-echo "alias factory=/usr/bin/service-factory" >> ~/.bashrc
-. ~/.bashrc
+mv ./factory /usr/local/bin/
 ```
 
 ## Configuration
