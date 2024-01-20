@@ -91,7 +91,7 @@ service {
 ```
 
 ## Cookie Cutters
-Service Factory allows for cookie cutter repository creation using the go-template engine. Every value in a service spec file can be used in a templates. Example of a cookie cutter file intended to render a Dockerfile with the service's port by using `{{.Service.Port}}`
+Service Factory allows for cookie cutter repository creation using the go-template engine. Every value in a service spec file can be used in templates. Example of a cookie cutter file intended to render a Dockerfile with the service's port by using `{{.Service.Port}}`
 ```go
 FROM ubuntu:22.04
 
@@ -127,7 +127,7 @@ Service Factory uses Terragrunt to execute Terraform code under the hood as part
 For now only Consul is supported as Terraform backend
 
 ## Repository as a service
-Service Factory registers created repositories to consul with an health check that confirms its existence. It will use the configured (/etc/service-factory/config.hcl) github or gitlab token to ping a private repository.
+Service Factory registers created repositories to Consul with a health check that confirms its existence. It will use the configured (/etc/service-factory/config.hcl) github or gitlab token to ping a private repository.
 
 ## Application Metrics
 Basic prometheus format metrics can be collected at http://sf_address:4884/v1/system/metrics
