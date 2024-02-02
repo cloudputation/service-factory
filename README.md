@@ -1,12 +1,12 @@
 # Service Factory
-Repository as code
+Repository as Code
 
 ## Description
 Service Factory facilitates the onboarding of new services in your organization by automating the redundancies in setting up a new repository.
 It employs a Pull-Render-Push (Connect) method that allows teams to describe and deploy new services in their organization by automating their repository creation. Allowing the dev team to start coding faster. By leveraging infrastructure as code, Service Factory reduces the time to market of a new service at the organization level while promoting standardization within your service repositories and a GitOps development workflow.
 
 ## Service Factory service deployment lifecycle
-![service factory service deployment lifecycle image](.release/docs/assets/Service_Factory_service_deployment_lifecycle.jpg)
+![service factory service deployment lifecycle image](.release/docs/assets/Service_Factory_service_deployment_lifecycle_chart.jpg)
 
 ## Repository provider support
 For now, only Github and Gitlab are supported.
