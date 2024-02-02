@@ -7,7 +7,6 @@ import (
 		"github.com/cloudputation/service-factory/packages/stats"
 )
 
-
 func main() {
 	err := config.LoadConfiguration()
 	if err != nil {
