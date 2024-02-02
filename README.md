@@ -44,7 +44,6 @@ repository {
     access_token = GITHUB_TOKEN
   }
 }
-
 ```
 
 ## Usage
