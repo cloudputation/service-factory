@@ -72,8 +72,17 @@ set-repo-for-github-release:
     - git remote add origin $GITHUB_REMOTE_URL
     - git checkout -b main
     - git add .
-    - grep "true" ./GIT_CONTROLS/RELEASE && git rm -r --cached GIT_CONTROLS && bash helpers/create_release.sh
-    - grep "false" ./GIT_CONTROLS/RELEASE && git rm -r --cached GIT_CONTROLS && git commit -m "ci commit" && git push -u origin main --force
+    - |
+      if grep -q "true" "GIT_CONTROLS/RELEASE"; then
+          git rm -r --cached GIT_CONTROLS
+          RELEASE_TAG=$(cat VERSION)
+          git tag -a v${RELEASE_TAG} -m "Creating release for version: ${RELEASE_TAG}"
+          git push origin v${RELEASE_TAG}
+      else
+          git rm -r --cached GIT_CONTROLS
+          git commit -m "ci commit"
+          git push -u origin main --force
+      fi
   only:
     - main
 
