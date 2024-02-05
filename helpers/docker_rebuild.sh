@@ -1,6 +1,6 @@
 # !/bin/bash
 
-SERVICE_PORT="48840"
+SERVICE_PORT="4884"
 HOME_SF_DATA="/opt/sf/sf-data"
 DOCKER_SF_DATA="/sf/sf-data"
 

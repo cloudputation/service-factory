@@ -13,7 +13,7 @@ job "service-factory" {
 
     network {
       port "service_factory_port" {
-        static = 48840
+        static = 4884
       }
     }
 
@@ -43,7 +43,7 @@ job "service-factory" {
           "mainframe-service"
         ]
         check {
-          name     = "${NOMAD_JOB_NAME} 48840 alive"
+          name     = "${NOMAD_JOB_NAME} 4884 alive"
           type     = "http"
           path     = "/health"
           interval = "10s"

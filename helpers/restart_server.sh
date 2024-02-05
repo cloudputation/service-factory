@@ -1,5 +1,5 @@
 #!/bin/bash
-PID=$(lsof -i :48840 | grep main | awk '{print $2}')
+PID=$(lsof -i :4884 | grep main | awk '{print $2}')
 sudo kill $PID
 
 rm -fr terraform/providers/gitlab/serviec-template/.terraform-cache

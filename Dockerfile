@@ -43,8 +43,8 @@ RUN chown -R ${SERVICE_USERNAME}:${SERVICE_USERNAME} ${ROOTDIR} \
     && chmod +x ${TERRAFORM_PATH} \
     && chmod +x ${TERRAGRUNT_PATH}
 
-# Expose port 8840
-EXPOSE 8840
+# Expose port 4884
+EXPOSE 4884
 
 # Set user
 USER ${SERVICE_USERNAME}

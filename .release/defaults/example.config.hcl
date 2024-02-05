@@ -2,7 +2,7 @@ log_dir = "log"
 data_dir = "sf-data"
 
 server {
-  port    = "8840"
+  port    = "4884"
   // Address of the server. It could be a local or remote address.
   // This is relevant when using the cli to communicate with the agent
   address = "127.0.0.1"
