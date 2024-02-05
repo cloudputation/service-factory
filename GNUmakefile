@@ -126,6 +126,12 @@ docker-push: docker-build ## push Docker image
 	docker push $(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):$(VERSION_MAJOR).$(VERSION_MINOR)
 	docker push $(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 
+# Push the Docker image to alt registry
+.PHONY: docker-push-alt
+docker-push-alt:
+	@echo "Pushing the Docker image..."
+	docker tag $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):$(DOCKER_TAG)
+	docker push $(DOCKER_REGISTRY)/$(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):$(DOCKER_TAG)
 
 # Clean up
 .PHONY: clean

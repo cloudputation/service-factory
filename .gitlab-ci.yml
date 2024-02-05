@@ -11,10 +11,7 @@ workflow:
         - "README.md"
 
 variables:
-  DOCKER_IMAGE: "service-factory"
-  DOCKER_TAG: "latest"
-  IMAGE_DISTRIBUTOR: "cloudputation"
-  DOCKER_REGISTRY: "registry.gitlab.com/"
+  DOCKER_REGISTRY: "registry.gitlab.com"
   NOMAD_HOST: "10.100.200.241"
   GITHUB_SF_TOKEN: "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"
   GITHUB_REMOTE_URL: "https://${GITHUB_SF_TOKEN}@github.com/cloudputation/service-factory.git"
@@ -41,7 +38,7 @@ push-docker-image:
   needs:
     - job: build-docker-image
   script:
-    - sudo make docker-push DOCKER_REGISTRY=$DOCKER_REGISTRY
+    - sudo make docker-push-alt DOCKER_REGISTRY=$DOCKER_REGISTRY
 
 deploy-service:
   needs:

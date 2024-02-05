@@ -28,6 +28,7 @@ job "service-factory" {
           username = "FranksRobins"
           password = "glpat-kuuxn3oXxwBsCMkxssDY"
         }
+
       }
 
       resources {
