@@ -56,7 +56,6 @@ set-repo-for-github-release:
     # Remove ci resources
     - rm -f .release/defaults/config.hcl
     - rm -rf .git
-    - rm -rf GIT_CONTROLS/
     - rm -rf helpers/
     - rm -rf infra/
     - rm -rf tests/
@@ -72,8 +71,8 @@ set-repo-for-github-release:
     - git remote add origin $GITHUB_REMOTE_URL
     - git checkout -b main
     - git add .
-    - grep "true" GIT_CONTROLS/RELEASE && bash helpers/create_release.sh
-    - grep "false" GIT_CONTROLS/RELEASE && git commit -m "ci commit" && git push -u origin main --force
+    - grep "true" ./GIT_CONTROLS/RELEASE && git rm -r --cached GIT_CONTROLS && bash helpers/create_release.sh
+    - grep "false" ./GIT_CONTROLS/RELEASE && git rm -r --cached GIT_CONTROLS && git commit -m "ci commit" && git push -u origin main --force
   only:
     - main
 
