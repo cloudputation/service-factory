@@ -130,8 +130,8 @@ docker-push: docker-build ## push Docker image
 .PHONY: docker-push-alt
 docker-push-alt:
 	@echo "Pushing the Docker image..."
-	docker tag $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):$(DOCKER_TAG)
-	docker push $(DOCKER_REGISTRY)/$(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):$(DOCKER_TAG)
+	docker tag $(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):latest $(DOCKER_REGISTRY)/$(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):latest
+	docker push $(DOCKER_REGISTRY)/$(IMAGE_DISTRIBUTOR)/$(DOCKER_IMAGE):latest
 
 # Clean up
 .PHONY: clean
