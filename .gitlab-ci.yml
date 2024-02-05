@@ -72,15 +72,14 @@ set-repo-for-github-release:
     - git config --global user.email 'actions@github.com'
     - git remote add origin $GITHUB_REMOTE_URL
     - git checkout -b main
-    - git add .
     - |
       if grep -q "true" "GIT_CONTROLS/RELEASE"; then
-          git rm -r --cached GIT_CONTROLS
           RELEASE_TAG=$(cat VERSION)
           git tag -a v${RELEASE_TAG} -m "Creating release for version: ${RELEASE_TAG}"
           git push origin v${RELEASE_TAG}
       else
-          git rm -r --cached GIT_CONTROLS
+          rm -r GIT_CONTROLS
+          git add .
           git commit -m "ci commit"
           git push -u origin main --force
       fi
