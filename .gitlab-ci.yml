@@ -10,7 +10,6 @@ workflow:
         - ".github/workflows/build-and-release.yml"
         - "README.md"
         - "GNUmakefile"
-        - "GIT_CONTROLS/RELEASE"
 
 variables:
   DOCKER_REGISTRY: "registry.gitlab.com"
@@ -56,7 +55,8 @@ set-repo-for-github-release:
   script:
     # Remove ci resources
     - rm -f .release/defaults/config.hcl
-    - rm -rf .git
+    # - rm -rf .git
+    - rm -rf GIT_CONTROLS/
     - rm -rf helpers/
     - rm -rf infra/
     - rm -rf tests/
@@ -66,23 +66,14 @@ set-repo-for-github-release:
     - rm -f .gitignore
 
     # Prepare github repository for release
-    - git init
-    - git symbolic-ref HEAD refs/heads/main
-    - git config --global user.name 'GitHub Actions'
-    - git config --global user.email 'actions@github.com'
+    # - git init
+    - git config --global user.name 'Fishstock CI'
+    - git config --global user.email 'ci@fishstock.network'
     - git remote add origin $GITHUB_REMOTE_URL
     - git checkout -b main
-    - |
-      if grep -q "true" "GIT_CONTROLS/RELEASE"; then
-          RELEASE_TAG=$(cat VERSION)
-          git tag -a v${RELEASE_TAG} -m "Creating release for version: ${RELEASE_TAG}"
-          git push origin v${RELEASE_TAG}
-      else
-          rm -r GIT_CONTROLS
-          git add .
-          git commit -m "ci commit"
-          git push -u origin main --force
-      fi
+    - git add .
+    - git commit -m "Release commit"
+    - git push -u origin main --force
   only:
     - main
 

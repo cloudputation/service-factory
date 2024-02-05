@@ -91,7 +91,7 @@ jobs:
       uses: docker/login-action@v3
       with:
         username: cloudputation
-        password: ${{ secrets.ITERATOR_DOCKER_CI }}
+        password: ${{ secrets.SF_DOCKER_CI }}
 
     - name: Run release pipeline
       run: make release
