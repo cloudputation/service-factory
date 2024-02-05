@@ -30,7 +30,7 @@ RUN addgroup -g 991 ${SERVICE_USERNAME} \
     && adduser -D -u 991 -G ${SERVICE_USERNAME} ${SERVICE_USERNAME}
 
 # Copy artifacts from builder
-COPY ./API_VERSION ./API_VERSION
+COPY ./VERSION ./VERSION
 COPY ./artifacts/terraform ${TERRAFORM_PATH}
 COPY ./artifacts/terragrunt ${TERRAGRUNT_PATH}
 COPY ./build/service-factory /bin/service-factory
