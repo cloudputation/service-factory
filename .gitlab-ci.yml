@@ -10,6 +10,7 @@ workflow:
         - ".github/workflows/build-and-release.yml"
         - "README.md"
         - "GNUmakefile"
+        - "GIT_CONTROLS/RELEASE"
 
 variables:
   DOCKER_REGISTRY: "registry.gitlab.com"
