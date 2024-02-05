@@ -9,6 +9,7 @@ workflow:
         - ".release/docker/docker-entrypoint.sh"
         - ".github/workflows/build-and-release.yml"
         - "README.md"
+        - "GNUmakefile"
 
 variables:
   DOCKER_REGISTRY: "registry.gitlab.com"
